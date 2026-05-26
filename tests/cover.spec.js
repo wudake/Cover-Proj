@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 const fs = require('fs');
 
-const COVER_PATH = `file://${path.resolve(__dirname, '..', 'Cover.html')}`;
+const COVER_PATH = `file://${path.resolve(__dirname, '..', 'Cover_V4.4.0.html')}`;
 
 // Helper: switch to a tab in the new tabbed layout
 async function switchToTab(page, tabName) {
@@ -672,10 +672,10 @@ test.describe('Cover.html - B2B预设模板', () => {
   });
 });
 
-test.describe('Cover.html - 副标题与底部标签排版', () => {
+test.describe('Cover_V4.4.0 - 副标题与底部标签排版', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('file:///' + path.resolve(__dirname, '..', 'Cover.html'));
-    await page.waitForLoadState('domcontentloaded');
+    await page.goto(COVER_PATH, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(2000);
     await switchToTab(page, 'text');
   });
 
@@ -713,38 +713,58 @@ test.describe('Cover.html - 副标题与底部标签排版', () => {
 
   test('T74: 副标题字号同步应用到预览DOM', async ({ page }) => {
     await page.locator('#sub-font-size').fill('48');
-    const fontSize = await page.locator('#disp-subtitle').evaluate(el => el.style.fontSize);
-    expect(fontSize).toBe('16px'); // 48/3 = 16
+    await page.waitForTimeout(300);
+    const result = await page.evaluate(() => {
+      const el = document.getElementById('disp-subtitle');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { fontSize: parseFloat(el.style.fontSize), scale };
+    });
+    expect(result.fontSize).toBeCloseTo(48 * result.scale, 0);
   });
 
   test('T75: 底部标签字号同步应用到预览DOM', async ({ page }) => {
     await page.locator('#badge-font-size').fill('36');
-    const fontSize = await page.locator('#disp-audience').evaluate(el => el.style.fontSize);
-    expect(fontSize).toBe('12px'); // 36/3 = 12
+    await page.waitForTimeout(300);
+    const result = await page.evaluate(() => {
+      const el = document.getElementById('disp-audience');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { fontSize: parseFloat(el.style.fontSize), scale };
+    });
+    expect(result.fontSize).toBeCloseTo(36 * result.scale, 0);
   });
 
   test('T76: 副标题字间距同步应用到预览DOM', async ({ page }) => {
     await page.locator('#sub-letter-spacing').fill('3');
-    const ls = await page.locator('#disp-subtitle').evaluate(el => el.style.letterSpacing);
-    expect(ls).toBe('1px'); // 3/3 = 1
+    await page.waitForTimeout(300);
+    const result = await page.evaluate(() => {
+      const el = document.getElementById('disp-subtitle');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { letterSpacing: parseFloat(el.style.letterSpacing), scale };
+    });
+    expect(result.letterSpacing).toBeCloseTo(3 * result.scale, 1);
   });
 });
 
-test.describe('Cover.html - 预览与画布一致性', () => {
+test.describe('Cover_V4.4.0 - 预览与画布一致性', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('file:///' + path.resolve(__dirname, '..', 'Cover.html'));
-    await page.waitForLoadState('domcontentloaded');
+    await page.goto(COVER_PATH, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(2000);
     await switchToTab(page, 'text');
   });
 
-  test('T77: 标题字号预览与画布一致 (1/3缩放)', async ({ page }) => {
+  test('T77: 标题字号预览与画布一致 (动态缩放)', async ({ page }) => {
     await page.locator('#text-font-size').fill('88');
-    // Wait for updatePreview to apply
     await page.waitForTimeout(300);
-    const previewFs = await page.locator('#preview-aspect h2').evaluate(el => el.style.fontSize);
-    // 88/3 ≈ 29.33px
-    expect(parseFloat(previewFs)).toBeCloseTo(88 / 3, 0);
-    // Verify canvas would use the raw value
+    const result = await page.evaluate(() => {
+      const titleEl = document.querySelector('#preview-aspect h2');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { previewFs: parseFloat(titleEl.style.fontSize), scale };
+    });
+    expect(result.previewFs).toBeCloseTo(88 * result.scale, 0);
     const canvasVal = await page.evaluate(() => {
       const el = document.getElementById('text-font-size');
       return el ? parseInt(el.value) : null;
@@ -752,12 +772,16 @@ test.describe('Cover.html - 预览与画布一致性', () => {
     expect(canvasVal).toBe(88);
   });
 
-  test('T78: 标题字间距预览与画布一致 (1/3缩放)', async ({ page }) => {
+  test('T78: 标题字间距预览与画布一致 (动态缩放)', async ({ page }) => {
     await page.locator('#text-letter-spacing').fill('-2');
     await page.waitForTimeout(300);
-    const previewLs = await page.locator('#preview-aspect h2').evaluate(el => el.style.letterSpacing);
-    // -2/3 ≈ -0.67px
-    expect(parseFloat(previewLs)).toBeCloseTo(-2 / 3, 1);
+    const result = await page.evaluate(() => {
+      const titleEl = document.querySelector('#preview-aspect h2');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { previewLs: parseFloat(titleEl.style.letterSpacing), scale };
+    });
+    expect(result.previewLs).toBeCloseTo(-2 * result.scale, 1);
     const canvasVal = await page.evaluate(() => {
       const el = document.getElementById('text-letter-spacing');
       return el ? parseFloat(el.value) : null;
@@ -769,7 +793,6 @@ test.describe('Cover.html - 预览与画布一致性', () => {
     await page.locator('#text-line-height').fill('112');
     await page.waitForTimeout(300);
     const previewLh = await page.locator('#preview-aspect h2').evaluate(el => el.style.lineHeight);
-    // 112/100 = 1.12 (unitless)
     expect(parseFloat(previewLh)).toBeCloseTo(1.12, 2);
     const canvasVal = await page.evaluate(() => {
       const el = document.getElementById('text-line-height');
@@ -778,11 +801,16 @@ test.describe('Cover.html - 预览与画布一致性', () => {
     expect(canvasVal).toBe(112);
   });
 
-  test('T80: 副标题字号预览与画布一致 (1/3缩放)', async ({ page }) => {
+  test('T80: 副标题字号预览与画布一致 (动态缩放)', async ({ page }) => {
     await page.locator('#sub-font-size').fill('46');
     await page.waitForTimeout(300);
-    const previewFs = await page.locator('#disp-subtitle').evaluate(el => el.style.fontSize);
-    expect(parseFloat(previewFs)).toBeCloseTo(46 / 3, 0);
+    const result = await page.evaluate(() => {
+      const el = document.getElementById('disp-subtitle');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { previewFs: parseFloat(el.style.fontSize), scale };
+    });
+    expect(result.previewFs).toBeCloseTo(46 * result.scale, 0);
     const canvasVal = await page.evaluate(() => {
       const el = document.getElementById('sub-font-size');
       return el ? parseInt(el.value) : null;
@@ -790,11 +818,16 @@ test.describe('Cover.html - 预览与画布一致性', () => {
     expect(canvasVal).toBe(46);
   });
 
-  test('T81: 副标题字间距预览与画布一致 (1/3缩放)', async ({ page }) => {
+  test('T81: 副标题字间距预览与画布一致 (动态缩放)', async ({ page }) => {
     await page.locator('#sub-letter-spacing').fill('1');
     await page.waitForTimeout(300);
-    const previewLs = await page.locator('#disp-subtitle').evaluate(el => el.style.letterSpacing);
-    expect(parseFloat(previewLs)).toBeCloseTo(1 / 3, 1);
+    const result = await page.evaluate(() => {
+      const el = document.getElementById('disp-subtitle');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { previewLs: parseFloat(el.style.letterSpacing), scale };
+    });
+    expect(result.previewLs).toBeCloseTo(1 * result.scale, 1);
     const canvasVal = await page.evaluate(() => {
       const el = document.getElementById('sub-letter-spacing');
       return el ? parseFloat(el.value) : null;
@@ -802,11 +835,16 @@ test.describe('Cover.html - 预览与画布一致性', () => {
     expect(canvasVal).toBe(1);
   });
 
-  test('T82: 底部标签字号预览与画布一致 (1/3缩放)', async ({ page }) => {
+  test('T82: 底部标签字号预览与画布一致 (动态缩放)', async ({ page }) => {
     await page.locator('#badge-font-size').fill('34');
     await page.waitForTimeout(300);
-    const previewFs = await page.locator('#disp-audience').evaluate(el => el.style.fontSize);
-    expect(parseFloat(previewFs)).toBeCloseTo(34 / 3, 0);
+    const result = await page.evaluate(() => {
+      const el = document.getElementById('disp-audience');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { previewFs: parseFloat(el.style.fontSize), scale };
+    });
+    expect(result.previewFs).toBeCloseTo(34 * result.scale, 0);
     const canvasVal = await page.evaluate(() => {
       const el = document.getElementById('badge-font-size');
       return el ? parseInt(el.value) : null;
@@ -814,11 +852,16 @@ test.describe('Cover.html - 预览与画布一致性', () => {
     expect(canvasVal).toBe(34);
   });
 
-  test('T83: 底部标签字间距预览与画布一致 (1/3缩放)', async ({ page }) => {
+  test('T83: 底部标签字间距预览与画布一致 (动态缩放)', async ({ page }) => {
     await page.locator('#badge-letter-spacing').fill('1');
     await page.waitForTimeout(300);
-    const previewLs = await page.locator('#disp-audience').evaluate(el => el.style.letterSpacing);
-    expect(parseFloat(previewLs)).toBeCloseTo(1 / 3, 1);
+    const result = await page.evaluate(() => {
+      const el = document.getElementById('disp-audience');
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
+      return { previewLs: parseFloat(el.style.letterSpacing), scale };
+    });
+    expect(result.previewLs).toBeCloseTo(1 * result.scale, 1);
     const canvasVal = await page.evaluate(() => {
       const el = document.getElementById('badge-letter-spacing');
       return el ? parseFloat(el.value) : null;
@@ -875,50 +918,53 @@ test.describe('Cover.html - 预览与画布一致性', () => {
     await page.locator('#highlight-color-select').selectOption('#F3921F');
     await page.waitForTimeout(500);
 
-    // Read all canvas values
-    const canvasParams = await page.evaluate(() => {
-      return {
-        fontSize: parseInt(document.getElementById('text-font-size')?.value),
-        letterSpacing: parseFloat(document.getElementById('text-letter-spacing')?.value),
-        lineHeight: parseFloat(document.getElementById('text-line-height')?.value),
-        strokeWidth: parseFloat(document.getElementById('text-stroke-width')?.value),
-        subFontSize: parseInt(document.getElementById('sub-font-size')?.value),
-        subLetterSpacing: parseFloat(document.getElementById('sub-letter-spacing')?.value),
-        badgeFontSize: parseInt(document.getElementById('badge-font-size')?.value),
-        badgeLetterSpacing: parseFloat(document.getElementById('badge-letter-spacing')?.value),
-        fontFamily: document.getElementById('font-family-select')?.value,
-        highlightColor: document.getElementById('highlight-color-select')?.value,
-      };
-    });
-
-    // Read all preview values (scaled /3)
-    const previewParams = await page.evaluate(() => {
+    // Read all canvas + preview values with dynamic scale
+    const allParams = await page.evaluate(() => {
+      const previewAspect = document.getElementById('preview-aspect');
+      const scale = previewAspect ? (previewAspect.getBoundingClientRect().width - 20) / 1080 : 1/3;
       const titleEl = document.querySelector('#preview-aspect h2');
       const subtitleEl = document.getElementById('disp-subtitle');
       const audDisp = document.getElementById('disp-audience');
       const container = document.getElementById('preview-text-container');
       const highlightEl = document.getElementById('disp-title-highlight');
       return {
-        titleFontSize: titleEl ? parseFloat(titleEl.style.fontSize) : null,
-        titleLetterSpacing: titleEl ? parseFloat(titleEl.style.letterSpacing) : null,
-        titleLineHeight: titleEl ? parseFloat(titleEl.style.lineHeight) : null,
-        subFontSize: subtitleEl ? parseFloat(subtitleEl.style.fontSize) : null,
-        subLetterSpacing: subtitleEl ? parseFloat(subtitleEl.style.letterSpacing) : null,
-        badgeFontSize: audDisp ? parseFloat(audDisp.style.fontSize) : null,
-        badgeLetterSpacing: audDisp ? parseFloat(audDisp.style.letterSpacing) : null,
-        fontFamily: container ? container.style.fontFamily : null,
-        highlightColor: highlightEl ? highlightEl.style.color : null,
+        scale,
+        canvas: {
+          fontSize: parseInt(document.getElementById('text-font-size')?.value),
+          letterSpacing: parseFloat(document.getElementById('text-letter-spacing')?.value),
+          lineHeight: parseFloat(document.getElementById('text-line-height')?.value),
+          strokeWidth: parseFloat(document.getElementById('text-stroke-width')?.value),
+          subFontSize: parseInt(document.getElementById('sub-font-size')?.value),
+          subLetterSpacing: parseFloat(document.getElementById('sub-letter-spacing')?.value),
+          badgeFontSize: parseInt(document.getElementById('badge-font-size')?.value),
+          badgeLetterSpacing: parseFloat(document.getElementById('badge-letter-spacing')?.value),
+          fontFamily: document.getElementById('font-family-select')?.value,
+          highlightColor: document.getElementById('highlight-color-select')?.value,
+        },
+        preview: {
+          titleFontSize: titleEl ? parseFloat(titleEl.style.fontSize) : null,
+          titleLetterSpacing: titleEl ? parseFloat(titleEl.style.letterSpacing) : null,
+          titleLineHeight: titleEl ? parseFloat(titleEl.style.lineHeight) : null,
+          subFontSize: subtitleEl ? parseFloat(subtitleEl.style.fontSize) : null,
+          subLetterSpacing: subtitleEl ? parseFloat(subtitleEl.style.letterSpacing) : null,
+          badgeFontSize: audDisp ? parseFloat(audDisp.style.fontSize) : null,
+          badgeLetterSpacing: audDisp ? parseFloat(audDisp.style.letterSpacing) : null,
+          fontFamily: container ? container.style.fontFamily : null,
+          highlightColor: highlightEl ? highlightEl.style.color : null,
+        },
       };
     });
 
-    // Verify 1/3 scale consistency
-    expect(previewParams.titleFontSize).toBeCloseTo(canvasParams.fontSize / 3, 0);
-    expect(previewParams.titleLetterSpacing).toBeCloseTo(canvasParams.letterSpacing / 3, 1);
+    const { scale, canvas: canvasParams, preview: previewParams } = allParams;
+
+    // Verify dynamic scale consistency
+    expect(previewParams.titleFontSize).toBeCloseTo(canvasParams.fontSize * scale, 0);
+    expect(previewParams.titleLetterSpacing).toBeCloseTo(canvasParams.letterSpacing * scale, 1);
     expect(previewParams.titleLineHeight).toBeCloseTo(canvasParams.lineHeight / 100, 2);
-    expect(previewParams.subFontSize).toBeCloseTo(canvasParams.subFontSize / 3, 0);
-    expect(previewParams.subLetterSpacing).toBeCloseTo(canvasParams.subLetterSpacing / 3, 1);
-    expect(previewParams.badgeFontSize).toBeCloseTo(canvasParams.badgeFontSize / 3, 0);
-    expect(previewParams.badgeLetterSpacing).toBeCloseTo(canvasParams.badgeLetterSpacing / 3, 1);
+    expect(previewParams.subFontSize).toBeCloseTo(canvasParams.subFontSize * scale, 0);
+    expect(previewParams.subLetterSpacing).toBeCloseTo(canvasParams.subLetterSpacing * scale, 1);
+    expect(previewParams.badgeFontSize).toBeCloseTo(canvasParams.badgeFontSize * scale, 0);
+    expect(previewParams.badgeLetterSpacing).toBeCloseTo(canvasParams.badgeLetterSpacing * scale, 1);
 
     // Verify exact values
     expect(canvasParams.fontSize).toBe(80);
@@ -943,7 +989,7 @@ test.describe('Cover.html - 预览与画布一致性', () => {
       const ctx = canvas.getContext('2d');
       const fontSizeEl = document.getElementById('text-font-size');
       const letterSpacingEl = document.getElementById('text-letter-spacing');
-      const fontSize = fontSizeEl ? parseInt(fontSizeEl.value) : 88;
+      const fontSize = fontSizeEl ? parseInt(fontSizeEl.value) : 74;
       const letterSpacing = letterSpacingEl ? parseFloat(letterSpacingEl.value) : -2;
 
       // Simulate what generateAndDownload does for word measurement

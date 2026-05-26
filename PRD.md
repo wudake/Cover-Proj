@@ -1,7 +1,7 @@
 # Boswindor 海外社媒封面生成器 — 产品需求文档 (PRD)
 
-**版本**: V4.2.0  
-**状态**: 已实现 (单文件应用 `Cover_V4.2.0.html`)  
+**版本**: V4.4.0  
+**状态**: 已实现 (单文件应用 `Cover_V4.4.0.html`)  
 **发布日期**: 2026-05  
 **目标用户**: Boswindor 品牌运营团队 — 快速生成 IG Reels 竖屏封面图
 
@@ -242,7 +242,7 @@
 
 ## 4. 版本演进
 
-### V4.2.0 变更 (相对 V4.0.0)
+### V4.4.0 变更 (相对 V4.0.0)
 
 | 模块 | 变更内容 |
 |------|---------|
@@ -285,7 +285,7 @@
 Cover-Proj/
 ├── Cover.html              # V1.0.0 稳定版
 ├── Cover_V4.0.0.html       # V4.0.0 稳定版
-├── Cover_V4.2.0.html       # V4.2.0 主文件 (最新)
+├── Cover_V4.4.0.html       # V4.4.0 主文件 (最新)
 ├── package.json            # Playwright 测试依赖
 ├── playwright.config.js    # Playwright Edge 配置
 ├── tests/

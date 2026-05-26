@@ -18,14 +18,14 @@ npm install
 npx playwright test
 ```
 
-浏览器直接打开 `Cover_V4.2.0.html` 即可使用。
+浏览器直接打开 `Cover_V4.4.0.html` 即可使用。
 
 ## 项目结构
 
 ```
 ├── Cover.html              # V1.0.0 稳定版
 ├── Cover_V4.0.0.html       # V4.0.0 稳定版
-├── Cover_V4.2.0.html       # V4.2.0 主文件 (最新)
+├── Cover_V4.4.0.html       # V4.4.0 主文件 (最新)
 ├── PRD.md                  # 产品需求文档
 ├── package.json            # Playwright 依赖
 ├── playwright.config.js    # Playwright (Edge) 配置
@@ -39,7 +39,7 @@ HTML5 Canvas · Tailwind CSS · Google Fonts · FontAwesome · Vanilla JS · Pla
 
 ## 版本
 
-**V4.2.0** — 动态缩放预览、精致包边比例匹配、顶部渐变修复、默认值优化、标签透明背景
+**V4.4.0** — 动态缩放预览、精致包边比例匹配、顶部渐变修复、默认值优化、标签透明背景、Stroke样式完整匹配
 
 **V4.0.0** — 增强排版默认值、Canvas letterSpacing 渲染、badge pill 背景、分隔线、导出阴影渐变
 
