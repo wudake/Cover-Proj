@@ -1,0 +1,4 @@
+node_modules/
+test-results/
+.claude/
+Cover_backup_v3.html

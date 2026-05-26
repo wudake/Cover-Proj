@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boswindor 专属海外社媒封面生成器</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Space+Grotesk:wght@700&family=Noto+Sans+SC:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#F3921F', // Exact Boswindor Official warm corporate orange
+                            yellow: '#FFC800',
+                            white: '#FFFFFF',
+                            dark: '#0A0A0A',
+                            gray: '#121212',
+                            border: '#222222'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'Noto Sans SC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222222;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F3921F;
+        }
+        .safe-zone-overlay {
+            aspect-ratio: 1/1;
+            border: 2px dashed #F3921F;
+            background-color: rgba(243, 146, 31, 0.05);
+        }
+        .phone-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 40px;
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-neutral-100 min-h-screen font-sans antialiased selection:bg-brand-orange selection:text-black">
+
+    <!-- Header Section -->
+    <header class="border-b border-brand-border bg-brand-dark/80 backdrop-blur sticky top-0 z-50 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-orange text-black p-2 rounded-lg font-black text-xl tracking-tighter">
+                    BW
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-tight">BOSWINDOR <span class="text-brand-orange">GROWTH ENGINE</span></h1>
+                    <p class="text-xs text-neutral-400">海外社媒黄金标准封面一键生成系统 v3.4-p0 (德系重工高奢原片版)</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 text-xs bg-brand-gray px-4 py-2 rounded-full border border-brand-border text-neutral-300">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                B2B 德系精工美学：Reels 720px 宽度防挤压，支持原图深度微调裁剪
+            </div>
+        </div>
+    </header>
+
+<!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-4 md:px-6 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Side: Tabbed Controls Panel (5 cols) -->
+            <div class="lg:col-span-5 flex flex-col">
+
+                <!-- Tab Navigation -->
+                <div class="flex rounded-xl bg-brand-gray border border-brand-border overflow-hidden mb-4">
+                    <button onclick="switchTab('media')" id="tab-media-btn" class="tab-btn flex-1 py-3 px-2 text-xs font-extrabold tracking-wide text-center transition bg-brand-orange text-black">
+                        <i class="fa-solid fa-photo-film mr-1.5"></i>素材
+                    </button>
+                    <button onclick="switchTab('text')" id="tab-text-btn" class="tab-btn flex-1 py-3 px-2 text-xs font-extrabold tracking-wide text-center transition text-neutral-400 hover:text-neutral-200">
+                        <i class="fa-solid fa-font mr-1.5"></i>文字
+                    </button>
+                    <button onclick="switchTab('style')" id="tab-style-btn" class="tab-btn flex-1 py-3 px-2 text-xs font-extrabold tracking-wide text-center transition text-neutral-400 hover:text-neutral-200">
+                        <i class="fa-solid fa-palette mr-1.5"></i>样式
+                    </button>
+                </div>
+
+                <!-- Tab Content Container -->
+                <div class="flex-1">
+
+                    <!-- ==================== TAB 1: MEDIA ==================== -->
+                    <div id="tab-media" class="tab-panel space-y-4">
+                        <!-- Upload Card -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> 上传背景素材
+                            </h2>
+                            <div id="drop-zone" class="relative border-2 border-dashed border-brand-border hover:border-brand-orange/50 rounded-xl p-6 text-center cursor-pointer transition group bg-black/20">
+                                <input type="file" id="file-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*,video/*">
+                                <i class="fa-solid fa-photo-film text-3xl text-neutral-500 group-hover:text-brand-orange transition mb-2 block"></i>
+                                <p class="text-sm font-bold text-neutral-300" id="upload-prompt">拖拽真实的工厂视频/原图到这里</p>
+                                <p class="text-[11px] text-neutral-500 mt-1">支持 MP4, MOV, JPG, PNG 零滤镜原件</p>
+                            </div>
+
+                            <!-- Logo Upload (now visible) -->
+                            <div class="pt-3 border-t border-brand-border/40">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs text-neutral-400 font-bold">品牌 Logo</span>
+                                    <span id="logo-status" class="text-[10px] bg-red-950/40 text-red-400 px-2 py-0.5 rounded border border-red-900/40">未加载</span>
+                                </div>
+                                <div id="logo-drop-zone" class="relative border border-dashed border-brand-border hover:border-brand-orange/50 rounded-lg py-3 px-4 flex items-center justify-center gap-2 cursor-pointer transition group bg-black/20">
+                                    <input type="file" id="logo-file-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
+                                    <i class="fa-solid fa-image text-neutral-500 group-hover:text-brand-orange"></i>
+                                    <span class="text-xs text-neutral-400 group-hover:text-neutral-200">点击或拖拽上传 Logo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video Scrubber -->
+                        <div id="video-scrubber-panel" class="hidden space-y-3 p-4 bg-brand-gray border border-brand-border/60 rounded-xl">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-brand-orange font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-sliders"></i> 选择定格画面
+                                </span>
+                                <span id="video-time" class="text-xs text-neutral-400 font-mono">00:00 / 00:00</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button id="video-play-btn" onclick="togglePlayVideo()" class="bg-neutral-800 hover:bg-brand-orange hover:text-black text-neutral-200 w-9 h-9 rounded-lg flex items-center justify-center transition text-sm">
+                                    <i class="fa-solid fa-play"></i>
+                                </button>
+                                <input type="range" id="video-timeline" min="0" max="100" value="0" step="0.01" oninput="scrubVideo(this.value)" class="flex-grow accent-brand-orange h-1.5 rounded-lg appearance-none cursor-pointer bg-neutral-800">
+                            </div>
+                        </div>
+
+                        <!-- Background Adjust -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-crop-simple"></i> 背景视窗微调
+                            </h2>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs text-neutral-400 font-bold">背景比例放大 (Zoom)</label>
+                                        <span class="text-xs text-brand-orange font-mono" id="bg-scale-val">100%</span>
+                                    </div>
+                                    <input type="range" id="bg-scale" min="100" max="150" value="100" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs text-neutral-400 font-bold">背景垂直平移 (Y Shift)</label>
+                                        <span class="text-xs text-brand-orange font-mono" id="bg-shift-val">0px</span>
+                                    </div>
+                                    <input type="range" id="bg-shift-y" min="-150" max="150" value="0" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==================== TAB 2: TEXT ==================== -->
+                    <div id="tab-text" class="tab-panel space-y-4 hidden">
+                        <!-- Title Inputs -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square"></i> 文字内容
+                            </h2>
+                            <div>
+                                <label class="block text-xs font-bold text-neutral-400 mb-1.5">主标题文本</label>
+                                <input type="text" id="title-main" value="AS2047 Windows to Australia 25 Days Shipping" oninput="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-orange" placeholder="输入完整的英文主标题">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-brand-orange mb-1.5">需要高亮的单词</label>
+                                    <input type="text" id="title-highlight" value="Windows" oninput="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-3 py-2 text-sm text-brand-orange focus:outline-none focus:border-brand-orange" placeholder="输入高亮单词">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-neutral-400 mb-1.5">高亮文字颜色</label>
+                                    <select id="highlight-color-select" onchange="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-brand-orange">
+                                        <option value="#D47614">德系琥珀橙 (#D47614)</option>
+                                        <option value="#F3921F">博仕标准橙 (#F3921F)</option>
+                                        <option value="#DE9F35">哑光沙滩金 (#DE9F35)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-neutral-400 mb-1.5">副标题 (小字说明)</label>
+                                <input type="text" id="subtitle-val" value="Factory Direct Shipping" oninput="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-3 py-2 text-sm text-neutral-300 focus:outline-none focus:border-brand-orange">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-neutral-400 mb-1.5">底部高亮标签内容</label>
+                                <input type="text" id="audience-text" value="For Australian Builders" oninput="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-orange">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-neutral-400 mb-1.5">底部左侧图标</label>
+                                    <select id="left-icon" onchange="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-brand-orange">
+                                        <option value="ship" selected>货运/物流</option>
+                                        <option value="architect">建筑/设计</option>
+                                        <option value="villa">别墅/住宅</option>
+                                        <option value="contractor">合同/文件</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-neutral-400 mb-1.5">底部右侧文字</label>
+                                    <input type="text" id="footer-right-text" value="" oninput="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-orange" placeholder="可选右侧标签文字">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Typography Fine-Tuning -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-text-height"></i> 排版微调
+                            </h2>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs text-neutral-400 font-bold">字号</label>
+                                        <span id="font-size-val" class="text-xs text-brand-orange font-mono">72px</span>
+                                    </div>
+                                    <input type="range" id="text-font-size" min="48" max="96" value="72" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs text-neutral-400 font-bold">字间距</label>
+                                        <span id="letter-spacing-val" class="text-xs text-brand-orange font-mono">-4px</span>
+                                    </div>
+                                    <input type="range" id="text-letter-spacing" min="-8" max="4" value="-4" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs text-neutral-400 font-bold">行高</label>
+                                        <span id="line-height-val" class="text-xs text-brand-orange font-mono">92%</span>
+                                    </div>
+                                    <input type="range" id="text-line-height" min="80" max="120" value="92" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <label class="text-xs text-neutral-400 font-bold">精致包边</label>
+                                        <span id="stroke-width-val" class="text-xs text-brand-orange font-mono">1.5px</span>
+                                    </div>
+                                    <input type="range" id="text-stroke-width" min="0" max="4" step="0.5" value="1.5" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-neutral-400 mb-1.5">字体选择</label>
+                                <select id="font-family-select" onchange="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-brand-orange">
+                                    <option value="Space Grotesk, sans-serif">Space Grotesk — 几何现代感 (推荐)</option>
+                                    <option value="Montserrat, sans-serif">Montserrat — 经典粗体工业风</option>
+                                </select>
+                            </div>
+
+                            <!-- Subtitle Typography -->
+                            <div class="border-t border-brand-border/40 pt-3 mt-1">
+                                <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">副标题排版</span>
+                                <div class="grid grid-cols-2 gap-3 mt-2">
+                                    <div>
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-xs text-neutral-400 font-bold">副标题字号</label>
+                                            <span id="sub-font-size-val" class="text-xs text-brand-orange font-mono">38px</span>
+                                        </div>
+                                        <input type="range" id="sub-font-size" min="20" max="56" value="38" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-xs text-neutral-400 font-bold">副标题字间距</label>
+                                            <span id="sub-letter-spacing-val" class="text-xs text-brand-orange font-mono">0px</span>
+                                        </div>
+                                        <input type="range" id="sub-letter-spacing" min="-4" max="6" value="0" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Badge Typography -->
+                            <div class="border-t border-brand-border/40 pt-3 mt-1">
+                                <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">底部标签排版</span>
+                                <div class="grid grid-cols-2 gap-3 mt-2">
+                                    <div>
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-xs text-neutral-400 font-bold">标签字号</label>
+                                            <span id="badge-font-size-val" class="text-xs text-brand-orange font-mono">32px</span>
+                                        </div>
+                                        <input type="range" id="badge-font-size" min="18" max="48" value="32" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-xs text-neutral-400 font-bold">标签字间距</label>
+                                            <span id="badge-letter-spacing-val" class="text-xs text-brand-orange font-mono">0px</span>
+                                        </div>
+                                        <input type="range" id="badge-letter-spacing" min="-4" max="6" value="0" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Text Y Position -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-arrows-up-down"></i> 文字垂直位置
+                            </h2>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span id="ai-status-badge" class="text-[10px] bg-brand-orange/20 text-brand-orange border border-brand-orange/30 px-2 py-1 rounded font-bold animate-pulse">已锁定黄金下三分之一区</span>
+                                <span id="text-y-value" class="text-xs text-neutral-400 font-mono ml-auto">1300px</span>
+                            </div>
+                            <input type="range" id="text-y-position" min="450" max="1500" value="1340" oninput="manualScrubY(this.value)" class="w-full accent-brand-orange">
+                            <p class="text-[10px] text-neutral-500">提示：也可在右侧手机预览区直接拖拽移动文字</p>
+                        </div>
+                    </div>
+
+                    <!-- ==================== TAB 3: STYLE ==================== -->
+                    <div id="tab-style" class="tab-panel space-y-4 hidden">
+                        <!-- Background Style -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group"></i> 文字背板样式
+                            </h2>
+                            <select id="text-bg-style" onchange="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange">
+                                <option value="inspection" selected>📐 德系重工·极简质检卡 (B2B 黄金标准)</option>
+                                <option value="stroke">🔥 同行爆款·3D描边高亮 (Bold Stroke & Sharp Shadow)</option>
+                                <option value="glass">✨ 极简高透白玻 (Frosted Glassmorphic Card)</option>
+                                <option value="architect">📐 建筑师直角细边 (Architectural Line Frame)</option>
+                                <option value="shadow">🌌 经典微光投影 (Minimalist Shadow Glow)</option>
+                            </select>
+
+                            <div class="flex items-center gap-3 pt-1">
+                                <label class="inline-flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="show-logo-toggle" onchange="updatePreview()" class="rounded bg-black border-brand-border text-brand-orange focus:ring-brand-orange h-4 w-4">
+                                    <span class="text-xs font-bold text-neutral-300">显示品牌 Logo</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Dim & Shadow -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-moon"></i> 压暗与渐变
+                            </h2>
+                            <div>
+                                <label class="block text-xs font-bold text-neutral-400 mb-1.5">原片压暗保护 (仅质检卡模式)</label>
+                                <select id="inspection-dim-level" onchange="updatePreview()" class="w-full bg-black border border-brand-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange">
+                                    <option value="none">关闭 - 100% 纯净原片</option>
+                                    <option value="light" selected>轻度 - 底部 30% 渐变保护</option>
+                                    <option value="medium">中度 - 底部 55% 渐变保护</option>
+                                    <option value="heavy">重度 - 底部 80% 渐变保护</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-neutral-400 font-bold">底部渐变深度</label>
+                                    <span id="gradient-range-value" class="text-xs text-brand-orange font-mono">50%</span>
+                                </div>
+                                <input type="range" id="gradient-range" min="0" max="100" value="50" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                <p class="text-[10px] text-neutral-500 mt-1">非质检卡模式下生效</p>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="text-xs text-neutral-400 font-bold">背板透明度</label>
+                                    <span id="bg-opacity-value" class="text-xs text-brand-orange font-mono">100%</span>
+                                </div>
+                                <input type="range" id="text-bg-opacity" min="0" max="100" value="100" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                <p class="text-[10px] text-neutral-500 mt-1">0% = 完全透明，100% = 默认</p>
+                            </div>
+                        </div>
+
+                        <!-- Preset Templates -->
+                        <div class="bg-brand-gray border border-brand-border rounded-xl p-5 space-y-3">
+                            <h2 class="text-xs font-extrabold text-brand-orange uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-bookmark"></i> 快速预设模板
+                            </h2>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="applyTemplate(1)" class="text-xs bg-black border border-brand-border hover:border-brand-orange text-neutral-300 hover:text-brand-orange py-2 px-3 rounded-lg transition text-left">
+                                    <span class="block font-bold text-brand-orange">T1</span>
+                                    <span class="text-[10px]">澳洲AS2047门窗发货</span>
+                                </button>
+                                <button onclick="applyTemplate(2)" class="text-xs bg-black border border-brand-border hover:border-brand-orange text-neutral-300 hover:text-brand-orange py-2 px-3 rounded-lg transition text-left">
+                                    <span class="block font-bold text-brand-orange">T2</span>
+                                    <span class="text-[10px]">五金件质检细节</span>
+                                </button>
+                                <button onclick="applyTemplate(3)" class="text-xs bg-black border border-brand-border hover:border-brand-orange text-neutral-300 hover:text-brand-orange py-2 px-3 rounded-lg transition text-left">
+                                    <span class="block font-bold text-brand-orange">T3</span>
+                                    <span class="text-[10px]">迪拜别墅窗项目</span>
+                                </button>
+                                <button onclick="applyTemplate(4)" class="text-xs bg-black border border-brand-border hover:border-brand-orange text-neutral-300 hover:text-brand-orange py-2 px-3 rounded-lg transition text-left">
+                                    <span class="block font-bold text-brand-orange">T4</span>
+                                    <span class="text-[10px]">来图定制工程支持</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Export Button (always visible) -->
+                <div class="mt-4">
+                    <button onclick="generateAndDownload()" class="w-full bg-brand-orange hover:bg-orange-500 text-black font-extrabold py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-brand-orange/25">
+                        <i class="fa-solid fa-circle-arrow-down text-lg"></i>
+                        生成并下载 1080x1920 高清短视频封面
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Right Side: Interactive Phone Simulator (7 cols) -->
+            <div class="lg:col-span-7 flex flex-col items-center">
+
+                <div class="bg-brand-gray border border-brand-border rounded-2xl p-6 w-full max-w-lg flex flex-col items-center space-y-4">
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-sm font-extrabold text-neutral-300 tracking-wide">IG Reels 全屏模拟预览</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleIGOverlays()" id="ig-btn" class="text-xs bg-brand-orange text-black font-extrabold px-3 py-1.5 rounded-lg transition flex items-center gap-1 shadow">
+                                <i class="fa-brands fa-instagram"></i> IG UI
+                            </button>
+                            <button onclick="toggleSafeZone()" id="safe-zone-btn" class="text-xs bg-neutral-800 hover:bg-neutral-700 border border-brand-border hover:border-brand-orange text-neutral-300 px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                                <i class="fa-solid fa-crop-simple"></i> 安全线
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3D Mobile Phone Mock Container -->
+                    <div class="relative w-full overflow-hidden rounded-[40px] border-[10px] border-neutral-800 bg-black shadow-2xl phone-container" style="aspect-ratio: 9/16;" id="preview-aspect">
+
+                        <!-- Top Camera Notch -->
+                        <div class="absolute top-3 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-full z-50 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-neutral-900 rounded-full border border-neutral-800"></div>
+                        </div>
+
+                        <div id="fallback-bg" class="absolute inset-0 bg-neutral-900 flex flex-col items-center justify-center p-4 text-center z-0">
+                            <i class="fa-solid fa-photo-film text-neutral-800 text-8xl mb-4"></i>
+                            <span class="text-xs text-neutral-600 font-bold">正在渲染智能避让画幅...</span>
+                        </div>
+
+                        <!-- Real raw image backdrop container with scale and translation applied directly -->
+                        <img id="bg-img-preview" class="absolute inset-0 w-full h-full object-cover z-0 hidden transition-transform duration-100" src="" alt="Backdrop">
+
+                        <!-- Real raw video backdrop container -->
+                        <video id="bg-video-preview" class="absolute inset-0 w-full h-full object-cover z-0 hidden transition-transform duration-100" playsinline muted loop></video>
+
+                        <!-- Standard IG Black Gradient Mask (Zeroed on inspection mode for raw pristine colors) -->
+                        <div id="shadow-gradient-top" class="absolute top-0 left-0 right-0 h-[25%] bg-gradient-to-b from-black/85 to-transparent z-10 pointer-events-none transition-all duration-300"></div>
+                        <div id="shadow-gradient-bottom" class="absolute bottom-0 left-0 right-0 h-[75%] bg-gradient-to-t from-black/95 via-black/70 to-transparent z-10 pointer-events-none transition-all duration-300"></div>
+
+                        <!-- 🚨 INSTAGRAM OFFICIAL SYSTEM OVERLAY ELEMENTS -->
+                        <div id="ig-system-overlays" class="absolute inset-0 z-40 pointer-events-none transition-all duration-300">
+                            <!-- Top Bar -->
+                            <div class="absolute top-12 left-6 right-6 flex justify-between items-center text-white text-sm font-bold">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-chevron-left"></i> Reels</span>
+                                <i class="fa-solid fa-camera"></i>
+                            </div>
+
+                            <!-- Right Interaction Sidebar -->
+                            <div class="absolute bottom-28 right-4 flex flex-col items-center gap-6 text-white z-50 pointer-events-auto flex flex-col">
+                                <div class="flex flex-col items-center gap-1 cursor-pointer group">
+                                    <div class="w-11 h-11 bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:bg-brand-orange group-hover:text-black transition duration-200">
+                                        <i class="fa-regular fa-heart text-lg"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold">4.8万</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1 cursor-pointer group">
+                                    <div class="w-11 h-11 bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:bg-brand-orange group-hover:text-black transition duration-200">
+                                        <i class="fa-regular fa-comment text-lg"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold">1,368</span>
+                                </div>
+                                <div class="flex flex-col items-center gap-1 cursor-pointer group">
+                                    <div class="w-11 h-11 bg-black/40 rounded-full flex items-center justify-center border border-white/5 group-hover:bg-brand-orange group-hover:text-black transition duration-200">
+                                        <i class="fa-regular fa-paper-plane text-lg"></i>
+                                    </div>
+                                    <span class="text-[10px] font-bold">分享</span>
+                                </div>
+                                <div class="w-9 h-9 rounded-lg border-2 border-white overflow-hidden animate-spin" style="animation-duration: 4s;">
+                                    <div class="w-full h-full bg-brand-orange flex items-center justify-center text-[10px] text-black font-black">BW</div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom User Account & Caption overlays -->
+                            <div class="absolute bottom-8 left-6 right-20 text-white z-40 pointer-events-auto flex flex-col gap-1.5 text-left">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-brand-orange text-black font-black flex items-center justify-center text-xs border border-white/20">BW</div>
+                                    <span class="font-bold text-xs">boswindor_doors</span>
+                                    <span class="text-[9px] bg-brand-orange/20 text-brand-orange border border-brand-orange/40 px-1.5 py-0.5 rounded font-black">FOLLOW</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-200 leading-normal line-clamp-2">
+                                    Factory Direct Premium B2B Window manufacturing and logistics proof. #windowmanufacturer #AS2047 #architecture #FoshanFactory
+                                </p>
+                                <div class="flex items-center gap-1.5 text-[9px] text-neutral-400">
+                                    <i class="fa-solid fa-music"></i> <span>Original Audio - boswindor_official</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Layers (Above backgrounds/shadows) -->
+                        <div class="absolute inset-0 p-6 z-20 flex flex-col justify-between">
+
+                            <!-- Header Logo -->
+                            <div id="preview-logo-wrapper" class="self-start h-12 w-12 overflow-hidden flex items-center justify-start rounded-lg mt-8 z-30" style="visibility: hidden;">
+                                <img id="preview-logo-img" src="Boswindor 公司logo.png" class="h-10 w-auto object-cover object-left" style="max-width: none;" onerror="handleLogoError()">
+                                <div id="preview-logo-fallback" class="hidden">
+                                    <div class="bg-brand-orange text-black w-8 h-8 rounded flex items-center justify-center font-extrabold text-sm shadow">B</div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Floating Text Labels -->
+                            <div id="preview-text-container" class="space-y-2 absolute left-8 max-w-[70%] transition-all duration-300 origin-left pl-4">
+                                <div class="space-y-1.5">
+                                    <!-- Title Display Group -->
+                                    <h2 class="text-2xl font-extrabold leading-tight tracking-tight text-white whitespace-pre-wrap break-words" style="text-shadow: 0 4px 12px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95);">
+                                        <span id="disp-title-p1">Door Hardware </span><span id="disp-title-highlight" class="text-brand-orange">Check</span><span id="disp-title-p2"></span>
+                                    </h2>
+                                    <!-- Subtitle Display -->
+                                    <p id="disp-subtitle" class="text-xs text-neutral-300 font-semibold" style="text-shadow: 0 2px 8px rgba(0,0,0,0.95);">Details Before Manufacturing</p>
+                                </div>
+
+                                <!-- Trust & Target Badges Footer -->
+                                <div id="disp-badge-footer" class="pt-3 flex items-center justify-between text-[10px]">
+                                    <div id="badge-left-pill" class="flex items-center gap-1.5 transition-all duration-300" style="color: rgb(255, 255, 255); text-shadow: 0 2px 8px rgba(0,0,0,0.95);">
+                                        <span id="disp-audience" class="font-bold tracking-wide">For Custom Projects</span>
+                                    </div>
+                                    <div id="badge-right-pill" class="hidden transition-all duration-300">
+                                        <span id="disp-bullet" class="inline-block w-2 h-2 rounded-full mr-1.5"></span>
+                                        <span id="disp-footer-right"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- 1:1 Safe-Zone crop square box -->
+                        <div id="safe-zone-square" class="absolute left-0 right-0 top-[21.875%] bottom-[21.875%] border-2 border-dashed border-brand-orange/50 bg-brand-orange/5 z-30 pointer-events-none hidden">
+                            <span class="absolute top-2 left-2 bg-brand-orange text-black font-extrabold px-1.5 py-0.5 rounded text-[8px]">
+                                INS九宫格(1:1)主页显示区
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <!-- Hidden Canvas for precise high-res rendering and download -->
+                    <canvas id="export-canvas" width="1080" height="1920" class="hidden"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+
+    <!-- Custom Toast System -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 pointer-events-none space-y-2"></div>
+
+    <script>
+        // High-definition uncompressed real raw B2B test media urls (Fallback simulated storage remaining safe)
+        const B2B_PRESETS = {
+            'shipping': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1080',
+            'inspect': 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=1080',
+            'showroom-pull': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1080',
+            'meeting-neck': 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1080'
+        };
+
+        const FALLBACK_URLS = {
+            'shipping': 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1080',
+            'inspect': 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=1080',
+            'showroom-pull': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1080',
+            'meeting-neck': 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1080'
+        };
+
+        // Local State Variables
+        let userBgType = 'image'; // 'image' | 'video' | 'none'
+        let userBgImage = null; // Stored HTMLImageElement
+        let currentTemplateId = 1;
+        let showIGOverlays = true;
+        let isDragging = false; // Vertical dragging state
+
+        // Custom HTML Image loader for official brand logo
+        const logoImg = new Image();
+        logoImg.crossOrigin = "anonymous";
+        
+        logoImg.onload = () => {
+            const previewLogo = document.getElementById('preview-logo-img');
+            const previewFallback = document.getElementById('preview-logo-fallback');
+            const logoStatus = document.getElementById('logo-status');
+            
+            if (previewLogo) {
+                previewLogo.src = logoImg.src;
+                previewLogo.classList.remove('hidden');
+            }
+            if (previewFallback) previewFallback.classList.add('hidden');
+            if (logoStatus) {
+                logoStatus.innerText = "已加载 (默认)";
+                logoStatus.className = "text-[10px] bg-emerald-950/40 text-emerald-400 px-2 py-0.5 rounded border border-emerald-900/40";
+            }
+        };
+        logoImg.onerror = () => {
+            handleLogoError();
+        };
+        logoImg.src = "Boswindor 公司logo.png";
+
+        function handleLogoError() {
+            const previewImg = document.getElementById('preview-logo-img');
+            const previewFallback = document.getElementById('preview-logo-fallback');
+            const logoStatus = document.getElementById('logo-status');
+            
+            if (previewImg) previewImg.classList.add('hidden');
+            if (previewFallback) previewFallback.classList.remove('hidden');
+            if (logoStatus) {
+                logoStatus.innerText = "未上传";
+                logoStatus.className = "text-[10px] bg-red-950/40 text-red-400 px-2 py-0.5 rounded border border-red-900/40";
+            }
+        }
+
+        // Custom Toast Notification Maker
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `flex items-center gap-2 px-4 py-3 rounded-lg border text-xs shadow-lg transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto ${
+                type === 'success' ? 'bg-neutral-900 border-brand-orange text-brand-orange' : 'bg-red-950/90 border-red-500 text-red-200'
+            }`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> ${message}`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize drag-and-drop & preset loads on ready & vertical dragging
+        window.addEventListener('DOMContentLoaded', () => {
+            setupUploadEngine();
+            setupVideoPreviewSync();
+            setupVerticalDragging(); // Activate premium HUD dragging
+            // Custom direct init bypass to Y=1300px standard with empty/safe template
+            const titleInput = document.getElementById('title-main');
+            const highlightInput = document.getElementById('title-highlight');
+            const subInput = document.getElementById('subtitle-val');
+            const audInput = document.getElementById('audience-text');
+            if (titleInput && highlightInput && subInput && audInput) {
+                titleInput.value = "AS2047 Windows to Australia";
+                highlightInput.value = "Windows";
+                subInput.value = "Factory Direct Shipping";
+                audInput.value = "For Australian Builders";
+            }
+            setB2BPreset('shipping'); // Default to container shipping raw video
+        });
+
+        // Toggle Instagram layout overlays
+        function toggleIGOverlays() {
+            const container = document.getElementById('ig-system-overlays');
+            const btn = document.getElementById('ig-btn');
+            showIGOverlays = !showIGOverlays;
+
+            if (showIGOverlays) {
+                if (container) container.style.opacity = '1';
+                if (btn) btn.className = "text-xs bg-brand-orange text-black font-extrabold px-3 py-1 rounded transition flex items-center gap-1 shadow";
+                showToast("已显示系统按钮，帮助你更精确地避免文字被 Like 和头像区遮挡！");
+            } else {
+                if (container) container.style.opacity = '0';
+                if (btn) btn.className = "text-xs bg-neutral-800 hover:bg-neutral-700 border border-brand-border text-neutral-300 px-3 py-1 rounded transition flex items-center gap-1";
+                showToast("已关闭系统按钮，以无遮挡纯净格式呈现！");
+            }
+        }
+
+        // Setup mouse/touch vertical dragging over phone simulator
+        function setupVerticalDragging() {
+            const previewAspect = document.getElementById('preview-aspect');
+            const safeZoneSquare = document.getElementById('safe-zone-square');
+
+            if (!previewAspect) return;
+
+            previewAspect.addEventListener('pointerdown', (e) => {
+                if (e.target.closest('.pointer-events-auto') && !e.target.closest('#preview-text-container')) {
+                    return;
+                }
+                isDragging = true;
+                previewAspect.setPointerCapture(e.pointerId);
+                if (safeZoneSquare) safeZoneSquare.classList.remove('hidden'); // Show safe zone guidelines instantly
+                updateDragPosition(e);
+            });
+
+            previewAspect.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                updateDragPosition(e);
+            });
+
+            previewAspect.addEventListener('pointerup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                previewAspect.releasePointerCapture(e.pointerId);
+                
+                const safeZoneBtn = document.getElementById('safe-zone-btn');
+                const isSafeZoneBtnChecked = safeZoneBtn && safeZoneBtn.classList.contains('bg-brand-orange');
+                if (!isSafeZoneBtnChecked && safeZoneSquare) {
+                    safeZoneSquare.classList.add('hidden');
+                }
+                showToast("文字位置已锁定并同步！支持随时再次拖拽平移。");
+            });
+        }
+
+        function updateDragPosition(e) {
+            const previewAspect = document.getElementById('preview-aspect');
+            if (!previewAspect) return;
+
+            const rect = previewAspect.getBoundingClientRect();
+            const percentY = (e.clientY - rect.top) / rect.height;
+            let relativeY = percentY * 1920; 
+            
+            if (relativeY < 450) relativeY = 450;
+            if (relativeY > 1500) relativeY = 1500;
+            
+            const ySlider = document.getElementById('text-y-position');
+            if (ySlider) {
+                ySlider.value = Math.round(relativeY);
+            }
+            const yVal = document.getElementById('text-y-value');
+            if (yVal) {
+                yVal.innerText = Math.round(relativeY) + 'px';
+            }
+            updatePreview();
+        }
+
+        // Direct Native B2B Media preset Loader (Decoupled click switcher safely keeping pure images)
+        function setB2BPreset(key) {
+            const previewImg = document.getElementById('bg-img-preview');
+            const previewVideo = document.getElementById('bg-video-preview');
+            const fallbackDiv = document.getElementById('fallback-bg');
+            const scrubberPanel = document.getElementById('video-scrubber-panel');
+
+            // Reset
+            if (previewVideo) {
+                previewVideo.classList.add('hidden');
+                previewVideo.pause();
+            }
+            if (previewImg) previewImg.classList.add('hidden');
+            if (scrubberPanel) scrubberPanel.classList.add('hidden');
+
+            const fileUrl = B2B_PRESETS[key];
+
+            if (fileUrl && (fileUrl.endsWith('.mp4') || fileUrl.endsWith('.MP4'))) {
+                userBgType = 'video';
+                if (previewVideo) {
+                    previewVideo.src = fileUrl;
+                    previewVideo.load();
+                    
+                    previewVideo.onloadedmetadata = () => {
+                        previewVideo.classList.remove('hidden');
+                        if (fallbackDiv) fallbackDiv.classList.add('hidden');
+                        if (scrubberPanel) scrubberPanel.classList.remove('hidden');
+                        
+                        const timeline = document.getElementById('video-timeline');
+                        if (timeline) {
+                            timeline.max = previewVideo.duration;
+                            timeline.value = 0;
+                        }
+                        previewVideo.currentTime = 0;
+
+                        updateVideoTimeDisplay();
+                        autoDetectBestPosition();
+                        updatePreview();
+                        showToast("已成功加载高精度B端实拍视频，进度控制面板已挂载。");
+                    };
+
+                    previewVideo.onerror = () => {
+                        userBgType = 'image';
+                        previewVideo.classList.add('hidden');
+                        if (scrubberPanel) scrubberPanel.classList.add('hidden');
+                        
+                        if (previewImg) {
+                            previewImg.crossOrigin = "anonymous";
+                            previewImg.src = FALLBACK_URLS[key];
+                            previewImg.onload = () => {
+                                previewImg.classList.remove('hidden');
+                                if (fallbackDiv) fallbackDiv.classList.add('hidden');
+                                userBgImage = previewImg;
+                                autoDetectBestPosition();
+                                updatePreview();
+                                showToast("已安全重定向至云端高清实景渲染！");
+                            };
+                        }
+                    };
+                }
+
+            } else {
+                userBgType = 'image';
+                if (previewImg && fileUrl) {
+                    previewImg.crossOrigin = "anonymous";
+                    previewImg.src = fileUrl;
+
+                    previewImg.onload = () => {
+                        previewImg.classList.remove('hidden');
+                        if (fallbackDiv) fallbackDiv.classList.add('hidden');
+                        userBgImage = previewImg;
+                        autoDetectBestPosition();
+                        updatePreview();
+                        showToast("智能避让系统：B2B生产/设计会审原生态场景已对齐！");
+                    };
+
+                    previewImg.onerror = () => {
+                        previewImg.src = FALLBACK_URLS[key];
+                        previewImg.onload = () => {
+                            previewImg.classList.remove('hidden');
+                            if (fallbackDiv) fallbackDiv.classList.add('hidden');
+                            userBgImage = previewImg;
+                            autoDetectBestPosition();
+                            updatePreview();
+                        };
+                    };
+                }
+            }
+        }
+
+        // =========================================================================
+        // TAB SWITCHING
+        // =========================================================================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            const panel = document.getElementById('tab-' + tabName);
+            if (panel) panel.classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('bg-brand-orange', 'text-black');
+                b.classList.add('text-neutral-400');
+            });
+            const activeBtn = document.getElementById('tab-' + tabName + '-btn');
+            if (activeBtn) {
+                activeBtn.classList.add('bg-brand-orange', 'text-black');
+                activeBtn.classList.remove('text-neutral-400');
+            }
+        }
+
+        // Direct File Upload Management
+        function setupUploadEngine() {
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const previewImg = document.getElementById('bg-img-preview');
+            const previewVideo = document.getElementById('bg-video-preview');
+            const fallbackDiv = document.getElementById('fallback-bg');
+            const scrubberPanel = document.getElementById('video-scrubber-panel');
+
+            const logoFileInput = document.getElementById('logo-file-input');
+            const logoDropZone = document.getElementById('logo-drop-zone');
+
+            const handleFile = (file) => {
+                if (!file) return;
+
+                if (file.type.startsWith('image/')) {
+                    userBgType = 'image';
+                    if (previewVideo) {
+                        previewVideo.classList.add('hidden');
+                        previewVideo.pause();
+                    }
+                    if (scrubberPanel) scrubberPanel.classList.add('hidden');
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        if (previewImg) {
+                            previewImg.src = e.target.result;
+                            previewImg.onload = () => {
+                                previewImg.classList.remove('hidden');
+                                if (fallbackDiv) fallbackDiv.classList.add('hidden');
+                                userBgImage = previewImg;
+                                autoDetectBestPosition(); 
+                                updatePreview();
+                                showToast("真实性大图导入就绪！100%零精修原片渲染。");
+                            };
+                        }
+                    };
+                    reader.readAsDataURL(file);
+
+                } else if (file.type.startsWith('video/')) {
+                    userBgType = 'video';
+                    if (previewImg) previewImg.classList.add('hidden');
+                    if (previewVideo) {
+                        previewVideo.pause();
+                        
+                        const videoURL = URL.createObjectURL(file);
+                        previewVideo.src = videoURL;
+                        previewVideo.load();
+                        
+                        previewVideo.onloadedmetadata = () => {
+                            previewVideo.classList.remove('hidden');
+                            if (fallbackDiv) fallbackDiv.classList.add('hidden');
+                            if (scrubberPanel) scrubberPanel.classList.remove('hidden');
+                            
+                            const timeline = document.getElementById('video-timeline');
+                            if (timeline) {
+                                timeline.max = previewVideo.duration;
+                                timeline.value = 0;
+                            }
+                            previewVideo.currentTime = 0;
+
+                            updateVideoTimeDisplay();
+                            autoDetectBestPosition(); 
+                            updatePreview();
+                            showToast("真实的实拍交付视频加载成功！开始拖拽截帧。");
+                        };
+
+                        previewVideo.onerror = () => {
+                            showToast("视频格式不受浏览器支持，请转换至标准 H.264 MP4 格式！", "error");
+                        };
+                    }
+                } else {
+                    showToast("仅支持拖入现场 JPG、PNG 大图或标准 MP4 视频！", "error");
+                }
+            };
+
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+            }
+            
+            if (dropZone) {
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('border-brand-orange', 'bg-brand-orange/5');
+                });
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('border-brand-orange', 'bg-brand-orange/5');
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('border-brand-orange', 'bg-brand-orange/5');
+                    handleFile(e.dataTransfer.files[0]);
+                });
+            }
+
+            const handleLogoFile = (file) => {
+                if (!file || !file.type.startsWith('image/')) {
+                    showToast("无效文件，请上传正确的图片 Logo！", "error");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    logoImg.src = e.target.result;
+                    logoImg.onload = () => {
+                        const previewLogo = document.getElementById('preview-logo-img');
+                        const previewFallback = document.getElementById('preview-logo-fallback');
+                        const logoStatus = document.getElementById('logo-status');
+                        
+                        if (previewLogo) {
+                            previewLogo.src = e.target.result;
+                            previewLogo.classList.remove('hidden');
+                        }
+                        if (previewFallback) previewFallback.classList.add('hidden');
+                        if (logoStatus) {
+                            logoStatus.innerText = "已加载 (默认)";
+                            logoStatus.className = "text-[10px] bg-brand-orange/20 text-brand-orange px-2 py-0.5 rounded border border-brand-orange/40";
+                        }
+                        updatePreview();
+                        showToast("Boswindor 公司logo.png 品牌官方 Logo 已完美上传并锁定！");
+                    };
+                };
+                reader.readAsDataURL(file);
+            };
+
+            if (logoFileInput) {
+                logoFileInput.addEventListener('change', (e) => handleLogoFile(e.target.files[0]));
+            }
+
+            if (logoDropZone) {
+                logoDropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    logoDropZone.classList.add('border-brand-orange', 'bg-brand-orange/5');
+                });
+                logoDropZone.addEventListener('dragleave', () => {
+                    logoDropZone.classList.remove('border-brand-orange', 'bg-brand-orange/5');
+                });
+                logoDropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    logoDropZone.classList.remove('border-brand-orange', 'bg-brand-orange/5');
+                    handleLogoFile(e.dataTransfer.files[0]);
+                });
+            }
+        }
+
+        // Setup Video Events Synchronization
+        function setupVideoPreviewSync() {
+            const previewVideo = document.getElementById('bg-video-preview');
+            const timeline = document.getElementById('video-timeline');
+
+            if (previewVideo) {
+                previewVideo.addEventListener('timeupdate', () => {
+                    if (!previewVideo.paused && timeline) {
+                        timeline.value = previewVideo.currentTime;
+                        updateVideoTimeDisplay();
+                    }
+                });
+
+                previewVideo.addEventListener('seeked', () => {
+                    autoDetectBestPosition(); 
+                    updatePreview();
+                });
+            }
+        }
+
+        // Play/Pause Video Controls
+        function togglePlayVideo() {
+            const previewVideo = document.getElementById('bg-video-preview');
+            const playBtn = document.getElementById('video-play-btn');
+
+            if (previewVideo) {
+                if (previewVideo.paused) {
+                    previewVideo.play();
+                    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                    const aiBadge = document.getElementById('ai-status-badge');
+                    if (aiBadge) aiBadge.classList.add('hidden');
+                } else {
+                    previewVideo.pause();
+                    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                    autoDetectBestPosition();
+                    updatePreview();
+                }
+            }
+        }
+
+        // Timeline range scrubber logic
+        function scrubVideo(value) {
+            const previewVideo = document.getElementById('bg-video-preview');
+            const playBtn = document.getElementById('video-play-btn');
+
+            if (previewVideo) {
+                if (!previewVideo.paused) {
+                    previewVideo.pause();
+                    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                }
+
+                previewVideo.currentTime = parseFloat(value);
+                updateVideoTimeDisplay();
+            }
+        }
+
+        // Human-readable Time formatting
+        function updateVideoTimeDisplay() {
+            const previewVideo = document.getElementById('bg-video-preview');
+            const timeDisplay = document.getElementById('video-time');
+
+            if (previewVideo && timeDisplay) {
+                const formatTime = (secs) => {
+                    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+                    const s = Math.floor(secs % 60).toString().padStart(2, '0');
+                    const ms = Math.floor((secs % 1) * 100).toString().padStart(2, '0');
+                    return `${m}:${s}.${ms}`;
+                };
+
+                timeDisplay.innerText = `${formatTime(previewVideo.currentTime)} / ${formatTime(previewVideo.duration || 0)}`;
+            }
+        }
+
+        // =========================================================================
+        // 🚀 MASTER COMPUTER VISION: AUTOMATIC SAFE-ZONE POSITION DETECTION ENGINE
+        // =========================================================================
+        function autoDetectBestPosition() {
+            const canvas = document.getElementById('export-canvas');
+            const ctx = canvas.getContext('2d');
+            const previewImg = document.getElementById('bg-img-preview');
+            const previewVideo = document.getElementById('bg-video-preview');
+            
+            let sourceMedia = null;
+            if (userBgType === 'image' && previewImg && previewImg.complete && previewImg.naturalWidth > 0) sourceMedia = previewImg;
+            else if (userBgType === 'video' && previewVideo && previewVideo.readyState >= 2) sourceMedia = previewVideo;
+            
+            if (!sourceMedia) return;
+
+            try {
+                // Clear and render active frame onto hidden canvas for pixel sampling
+                ctx.clearRect(0,0,1080,1920);
+                drawBackgroundMedia(ctx, sourceMedia, 1080, 1920);
+
+                // Sample Region A (Top half inside 1:1 Safe zone: Y 550 to 950)
+                const imgDataTop = ctx.getImageData(140, 550, 800, 400);
+                // Sample Region B (Bottom half inside 1:1 Safe zone: Y 1050 to 1450)
+                const imgDataBottom = ctx.getImageData(140, 1050, 800, 400);
+
+                // Compute internal local contrast/variance density
+                const topClutter = calculateRegionClutter(imgDataTop);
+                const bottomClutter = calculateRegionClutter(imgDataBottom);
+
+                const ySlider = document.getElementById('text-y-position');
+                const aiBadge = document.getElementById('ai-status-badge');
+
+                if (ySlider) {
+                    // Strictly lock at 1300px default as requested by B2B growth standard
+                    ySlider.value = 1300;
+                    const textYValEl = document.getElementById('text-y-value');
+                    if (textYValEl) textYValEl.innerText = '1300px';
+                }
+
+                if (aiBadge) {
+                    aiBadge.innerText = "已锁定黄金下三分之一区";
+                    aiBadge.classList.remove('hidden');
+                }
+            } catch (e) {
+                console.warn("Local CORS bounds restricted automatic frame analysis. Fallback to default position.", e);
+            }
+        }
+
+        // Fast pixel contrast standard deviation variance calculator
+        function calculateRegionClutter(imgData) {
+            const data = imgData.data;
+            let totalLuma = 0;
+            let count = 0;
+            
+            for (let i = 0; i < data.length; i += 60) {
+                const r = data[i];
+                const g = data[i+1];
+                const b = data[i+2];
+                const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+                totalLuma += luma;
+                count++;
+            }
+            
+            const avgLuma = totalLuma / count;
+            let varianceSum = 0;
+            
+            for (let i = 0; i < data.length; i += 60) {
+                const r = data[i];
+                const g = data[i+1];
+                const b = data[i+2];
+                const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+                varianceSum += Math.pow(luma - avgLuma, 2);
+            }
+            
+            return varianceSum / count; 
+        }
+
+        function triggerManualAI() {
+            autoDetectBestPosition();
+            updatePreview();
+            showToast("智能分析完成！已将排版复位至 1300px 通用位置。");
+        }
+
+        function manualScrubY(val) {
+            const aiBadge = document.getElementById('ai-status-badge');
+            if (aiBadge) aiBadge.classList.add('hidden'); // Hide badge if user manually overwrites placement
+            const textYValEl = document.getElementById('text-y-value');
+            if (textYValEl) textYValEl.innerText = `${val}px`;
+            updatePreview();
+        }
+
+        // Get single simplified title input and parse highlighting dynamically (Perfect case-insensitive matching)
+        function getTitleTokens() {
+            const titleInput = document.getElementById('title-main');
+            const highlightInput = document.getElementById('title-highlight');
+            
+            const titleText = titleInput ? titleInput.value : "AS2047 Windows to Australia 25 Days Shipping";
+            const highlightText = highlightInput ? highlightInput.value : "Windows";
+            
+            let p1 = titleText;
+            let hl = "";
+            let p2 = "";
+            
+            if (highlightText && titleText.toLowerCase().includes(highlightText.toLowerCase())) {
+                const index = titleText.toLowerCase().indexOf(highlightText.toLowerCase());
+                p1 = titleText.substring(0, index);
+                hl = titleText.substring(index, index + highlightText.length);
+                p2 = titleText.substring(index + highlightText.length);
+            }
+            
+            return { p1, hl, p2 };
+        }
+
+        // Apply pre-configured Master B2B defaults (Perfect Null Safe Guard)
+        function applyTemplate(id) {
+            currentTemplateId = id;
+            const mainTitle = document.getElementById('title-main');
+            const highlight = document.getElementById('title-highlight');
+            const sub = document.getElementById('subtitle-val');
+            const aud = document.getElementById('audience-text');
+
+            if (mainTitle && highlight && sub && aud) {
+                switch (id) {
+                    case 1:
+                        mainTitle.value = "AS2047 Windows to Australia";
+                        highlight.value = "Windows";
+                        sub.value = "Factory Direct Shipping";
+                        aud.value = "For Australian Builders";
+                        break;
+                    case 2:
+                        mainTitle.value = "Door Hardware Check";
+                        highlight.value = "Check";
+                        sub.value = "Details Before Manufacturing";
+                        aud.value = "For Custom Projects";
+                        break;
+                    case 3:
+                        mainTitle.value = "Dubai Villa Window Project";
+                        highlight.value = "Window Project";
+                        sub.value = "Custom Ultra-Slim Aluminum Slider";
+                        aud.value = "For Villa Owners";
+                        break;
+                    case 4:
+                        mainTitle.value = "Send Us Your Drawings";
+                        highlight.value = "Drawings";
+                        sub.value = "Free Architecture Engineering Support";
+                        aud.value = "For Project Contractors";
+                        break;
+                }
+            }
+
+            // Always reset slider to 1180px Golden safe coordinates upon template switch
+            const ySlider = document.getElementById('text-y-position');
+            if (ySlider) {
+                ySlider.value = 1180;
+            }
+            const textYValEl = document.getElementById('text-y-value');
+            if (textYValEl) {
+                textYValEl.innerText = '1180px';
+            }
+
+            autoDetectBestPosition(); // Trigger AI positioning relative to template loads
+            updatePreview();
+        }
+
+        // Synchronize Interface Forms into Live Web Preview Frame (Perfect Null Safe Guard with 100% No-Vignette/Filter Option)
+        function updatePreview() {
+            const p1El = document.getElementById('title-main');
+            const highlightEl = document.getElementById('title-highlight');
+            const subEl = document.getElementById('subtitle-val');
+            const audEl = document.getElementById('audience-text');
+            const highlightColorEl = document.getElementById('highlight-color-select');
+            const fontFamilyEl = document.getElementById('font-family-select');
+            const fontSizeEl = document.getElementById('text-font-size');
+            const bgStyleEl = document.getElementById('text-bg-style');
+            const opacityEl = document.getElementById('gradient-range');
+            const showLogoToggleEl = document.getElementById('show-logo-toggle');
+            const strokeWidthEl = document.getElementById('text-stroke-width');
+            const letterSpacingEl = document.getElementById('text-letter-spacing');
+            const lineHeightEl = document.getElementById('text-line-height');
+            const subFontSizeEl = document.getElementById('sub-font-size');
+            const subLetterSpacingEl = document.getElementById('sub-letter-spacing');
+            const badgeFontSizeEl = document.getElementById('badge-font-size');
+            const badgeLetterSpacingEl = document.getElementById('badge-letter-spacing');
+            const titleYEl = document.getElementById('text-y-position');
+            const dimLevelEl = document.getElementById('inspection-dim-level');
+            const bgOpacityEl = document.getElementById('text-bg-opacity');
+            const bgOpacityValEl = document.getElementById('bg-opacity-value');
+            const bgOpacityRatio = bgOpacityEl ? parseInt(bgOpacityEl.value) / 100 : 1;
+            if (bgOpacityValEl) bgOpacityValEl.innerText = (bgOpacityRatio * 100).toFixed(0) + '%';
+
+            // Update gradient range value display
+            const gradientRangeValEl = document.getElementById('gradient-range-value');
+            if (gradientRangeValEl && opacityEl) gradientRangeValEl.innerText = opacityEl.value + '%';
+
+            // Update footer right text in preview
+            const footerRightEl = document.getElementById('footer-right-text');
+            const dispFooterRight = document.getElementById('disp-footer-right');
+            if (dispFooterRight && footerRightEl) dispFooterRight.innerText = footerRightEl.value;
+
+            // Update slider value displays
+            const letterSpacingValEl = document.getElementById('letter-spacing-val');
+            const lineHeightValEl = document.getElementById('line-height-val');
+            const strokeWidthValEl = document.getElementById('stroke-width-val');
+            const fontSizeValEl = document.getElementById('font-size-val');
+            if (letterSpacingValEl && letterSpacingEl) letterSpacingValEl.innerText = letterSpacingEl.value + 'px';
+            if (lineHeightValEl && lineHeightEl) lineHeightValEl.innerText = lineHeightEl.value + '%';
+            if (strokeWidthValEl && strokeWidthEl) strokeWidthValEl.innerText = strokeWidthEl.value + 'px';
+            if (fontSizeValEl && fontSizeEl) fontSizeValEl.innerText = fontSizeEl.value + 'px';
+
+            // Update sub/badge slider value displays
+            const subFontSizeValEl = document.getElementById('sub-font-size-val');
+            const subLetterSpacingValEl = document.getElementById('sub-letter-spacing-val');
+            const badgeFontSizeValEl = document.getElementById('badge-font-size-val');
+            const badgeLetterSpacingValEl = document.getElementById('badge-letter-spacing-val');
+            if (subFontSizeValEl && subFontSizeEl) subFontSizeValEl.innerText = (subFontSizeEl ? subFontSizeEl.value : '38') + 'px';
+            if (subLetterSpacingValEl && subLetterSpacingEl) subLetterSpacingValEl.innerText = subLetterSpacingEl.value + 'px';
+            if (badgeFontSizeValEl && badgeFontSizeEl) badgeFontSizeValEl.innerText = badgeFontSizeEl.value + 'px';
+            if (badgeLetterSpacingValEl && badgeLetterSpacingEl) badgeLetterSpacingValEl.innerText = badgeLetterSpacingEl.value + 'px';
+
+            // Update bg-scale and bg-shift value displays
+            const bgScaleValEl = document.getElementById('bg-scale-val');
+            const bgShiftValEl = document.getElementById('bg-shift-val');
+            const bgScaleElVal = document.getElementById('bg-scale');
+            const bgShiftYElVal = document.getElementById('bg-shift-y');
+            if (bgScaleValEl && bgScaleElVal) bgScaleValEl.innerText = bgScaleElVal.value + '%';
+            if (bgShiftValEl && bgShiftYElVal) bgShiftValEl.innerText = bgShiftYElVal.value + 'px';
+
+            const tokens = getTitleTokens();
+            const t1 = tokens.p1;
+            const th = tokens.hl;
+            const t2 = tokens.p2;
+            
+            const sub = subEl ? subEl.value : "Details Before Manufacturing";
+            const audText = audEl ? audEl.value : "For Custom Projects";
+            const titleY = titleYEl ? parseInt(titleYEl.value) : 1180;
+            const strokeVal = strokeWidthEl ? parseFloat(strokeWidthEl.value) : 2;
+            const letterSpacing = letterSpacingEl ? parseFloat(letterSpacingEl.value) : -4;
+            const lineHeightPct = lineHeightEl ? parseFloat(lineHeightEl.value) : 92;
+            const subFontSize = subFontSizeEl ? parseInt(subFontSizeEl.value) : 38;
+            const subLetterSpacing = subLetterSpacingEl ? parseFloat(subLetterSpacingEl.value) : 0;
+            const badgeFontSize = badgeFontSizeEl ? parseInt(badgeFontSizeEl.value) : 32;
+            const badgeLetterSpacing = badgeLetterSpacingEl ? parseFloat(badgeLetterSpacingEl.value) : 0;
+            
+            const bgStyle = bgStyleEl ? bgStyleEl.value : "inspection";
+            const previewContainer = document.getElementById('preview-text-container');
+            
+            // New Controls
+            const tilt = 0; // Strictly hardcoded to 0 slant as requested
+            const decoCorner = false; // Strictly disabled as requested
+            const highlightColor = highlightColorEl ? highlightColorEl.value : '#F3921F';
+            const fontFamily = fontFamilyEl ? fontFamilyEl.value : 'Space Grotesk, sans-serif';
+            const fontSize = fontSizeEl ? fontSizeEl.value : 72;
+            const opacity = opacityEl ? opacityEl.value : 50;
+
+            // Apply interactive background scale & vertical shift directly via CSS transforms!
+            const bgScaleEl = document.getElementById('bg-scale');
+            const bgShiftYEl = document.getElementById('bg-shift-y');
+            const currentScale = bgScaleEl ? parseFloat(bgScaleEl.value) / 100 : 1.0;
+            const currentShiftY = bgShiftYEl ? parseFloat(bgShiftYEl.value) : 0;
+            
+            const liveImg = document.getElementById('bg-img-preview');
+            const liveVid = document.getElementById('bg-video-preview');
+            if (liveImg) liveImg.style.transform = `scale(${currentScale}) translateY(${currentShiftY}px)`;
+            if (liveVid) liveVid.style.transform = `scale(${currentScale}) translateY(${currentShiftY}px)`;
+
+            if (previewContainer) {
+                previewContainer.className = "space-y-2 absolute left-8 max-w-[70%] transition-all duration-300 origin-left pl-4";
+            }
+            
+            // Toggle Background linear gradients with inspection dim level support
+            const topGrad = document.getElementById('shadow-gradient-top');
+            const bottomGradient = document.getElementById('shadow-gradient-bottom');
+            const dimLevel = dimLevelEl ? dimLevelEl.value : 'light';
+            const dimOpacityMap = { light: 0.30, medium: 0.55, heavy: 0.80 };
+            const topDimOpacityMap = { light: 0.15, medium: 0.30, heavy: 0.50 };
+
+            if (bgStyle === 'inspection') {
+                if (dimLevel === 'none') {
+                    if (topGrad) topGrad.style.display = 'none';
+                    if (bottomGradient) bottomGradient.style.display = 'none';
+                } else {
+                    if (topGrad) {
+                        topGrad.style.display = 'block';
+                        topGrad.style.opacity = topDimOpacityMap[dimLevel] || 0.15;
+                    }
+                    if (bottomGradient) {
+                        bottomGradient.style.display = 'block';
+                        bottomGradient.style.opacity = dimOpacityMap[dimLevel] || 0.30;
+                    }
+                }
+            } else {
+                if (topGrad) {
+                    topGrad.style.display = 'block';
+                    topGrad.style.opacity = '';
+                }
+                if (bottomGradient) {
+                    bottomGradient.style.display = 'block';
+                    bottomGradient.style.opacity = opacity / 100;
+                }
+            }
+
+            // Reset inline styles for HTML preview stroke rendering
+            const titleEl = document.querySelector('#preview-aspect h2');
+            const subtitleEl = document.getElementById('disp-subtitle');
+
+            // Apply Font Family & Rotation & Size & Letter Spacing & Line Height
+            if (previewContainer) {
+                previewContainer.style.fontFamily = fontFamily;
+                previewContainer.style.transform = `rotate(${tilt}deg)`;
+            }
+            if (titleEl) {
+                titleEl.style.fontSize = (fontSize / 3) + 'px'; // Exact 3x scale down from Canvas 1080p
+                titleEl.style.letterSpacing = (letterSpacing / 3) + 'px';
+                titleEl.style.lineHeight = (lineHeightPct / 100);
+
+                // Set text first
+                titleEl.innerHTML = `<span id="disp-title-p1"></span><span id="disp-title-highlight"></span><span id="disp-title-p2"></span>`;
+            }
+
+            // Apply letter-spacing and line-height to subtitle
+            if (subtitleEl) {
+                subtitleEl.style.fontSize = (subFontSizeEl ? parseInt(subFontSizeEl.value) : 38) / 3 + 'px';
+                subtitleEl.style.letterSpacing = (subLetterSpacingEl ? parseFloat(subLetterSpacingEl.value) : 0) / 3 + 'px';
+                subtitleEl.style.lineHeight = (lineHeightPct / 100);
+            }
+
+            // Apply badge font size and letter spacing to audience text
+            const audDisp = document.getElementById('disp-audience');
+            if (audDisp) {
+                audDisp.style.fontSize = (badgeFontSizeEl ? parseInt(badgeFontSizeEl.value) : 32) / 3 + 'px';
+                audDisp.style.letterSpacing = (badgeLetterSpacingEl ? parseFloat(badgeLetterSpacingEl.value) : 0) / 3 + 'px';
+            }
+            
+            const t1Disp = document.getElementById('disp-title-p1');
+            const thDisp = document.getElementById('disp-title-highlight');
+            const t2Disp = document.getElementById('disp-title-p2');
+
+            if (t1Disp) t1Disp.innerText = t1;
+            if (thDisp) {
+                thDisp.innerText = th;
+                thDisp.style.color = highlightColor;
+            }
+            if (t2Disp) t2Disp.innerText = t2;
+            if (subtitleEl) subtitleEl.innerText = sub;
+
+            if (audDisp) audDisp.innerText = audText;
+
+            // Clear old stroke styles on spans
+            const spans = titleEl ? titleEl.querySelectorAll('span') : [];
+            spans.forEach(span => {
+                span.style.webkitTextStroke = '';
+                span.style.paintOrder = '';
+                span.style.textShadow = '';
+            });
+            if (subtitleEl) {
+                subtitleEl.style.webkitTextStroke = '';
+                subtitleEl.style.paintOrder = '';
+                subtitleEl.style.textShadow = '';
+            }
+            
+            // Handle Deco Corner HTML display (Re-architected: Corner lines are removed completely)
+            const existingDecos = previewContainer ? previewContainer.querySelectorAll('.deco-bracket-el') : [];
+            existingDecos.forEach(el => el.remove());
+
+            const badgeFooter = document.getElementById('disp-badge-footer');
+            const badgeLeftPill = document.getElementById('badge-left-pill');
+            const badgeRightPill = document.getElementById('badge-right-pill');
+            
+            // Reset Badge Pill Classes
+            if (badgeLeftPill) {
+                badgeLeftPill.className = "flex items-center gap-1.5 text-neutral-200 transition-all duration-300";
+                badgeLeftPill.style.borderLeft = '';
+                badgeLeftPill.style.paddingLeft = '';
+                badgeLeftPill.style.background = '';
+                badgeLeftPill.style.border = '';
+                badgeLeftPill.style.borderRadius = '';
+                badgeLeftPill.style.padding = '';
+                badgeLeftPill.style.textShadow = '';
+                badgeLeftPill.style.webkitTextStroke = '';
+                badgeLeftPill.style.paintOrder = '';
+            }
+            if (badgeRightPill) {
+                badgeRightPill.className = "flex items-center gap-1 text-neutral-200 transition-all duration-300";
+                badgeRightPill.style.borderLeft = '';
+                badgeRightPill.style.paddingLeft = '';
+                badgeRightPill.style.background = '';
+                badgeRightPill.style.border = '';
+                badgeRightPill.style.borderRadius = '';
+                badgeRightPill.style.padding = '';
+                badgeRightPill.style.display = 'block'; // Make sure it's visible by default
+            }
+            if (badgeFooter) badgeFooter.className = "border-t border-white/10 pt-3 flex items-center justify-between text-[10px]";
+
+            // Pure B2B Engineering Card style handler (Refactored to perfectly match image_7416a4 and image_74e521 with super comfortable high-end outline shadow)
+            if (bgStyle === 'inspection' && previewContainer) {
+                previewContainer.classList.add('pl-5');
+
+                // Luxurious micro-thin precise stroke & diffused smooth drop shadow (Surpasses competitor quality)
+                spans.forEach(span => {
+                    span.style.webkitTextStroke = `${strokeVal}px rgba(0,0,0,0.85)`; 
+                    span.style.paintOrder = 'stroke fill';
+                    span.style.textShadow = '0 3px 8px rgba(0,0,0,0.95), 0 1px 2px rgba(0,0,0,0.95)';
+                });
+
+                // Re-style bottom badge elements to look like a quality checklist (Orange Vertical Line + White Text + Micro Black Outline)
+                if (badgeLeftPill) {
+                    badgeLeftPill.style.borderLeft = `4px solid ${highlightColor}`;
+                    badgeLeftPill.style.paddingLeft = '12px';
+                    badgeLeftPill.style.color = '#FFFFFF';
+                    badgeLeftPill.style.webkitTextStroke = `${strokeVal}px rgba(0,0,0,0.85)`;
+                    badgeLeftPill.style.paintOrder = 'stroke fill';
+                    badgeLeftPill.style.textShadow = '0 3px 6px rgba(0,0,0,0.95), 0 1px 2px rgba(0,0,0,0.95)';
+                }
+                if (badgeRightPill) {
+                    badgeRightPill.style.display = 'none'; // Only single left badge is needed for inspection style
+                }
+                if (badgeFooter) badgeFooter.className = "pt-2 flex items-center justify-between text-[10px]"; // remove borders, tight margin
+                if (subtitleEl) {
+                    subtitleEl.style.color = '#FFFFFF'; // Brighten subtitle to white
+                    subtitleEl.style.webkitTextStroke = `${strokeVal}px rgba(0,0,0,0.85)`;
+                    subtitleEl.style.paintOrder = 'stroke fill';
+                    subtitleEl.style.textShadow = '0 3px 6px rgba(0,0,0,0.95), 0 1px 2px rgba(0,0,0,0.95)';
+                }
+
+                // Create a refined tech separator line matching point 4 of GPT feedback!
+                const techLine = document.createElement('div');
+                techLine.className = "tech-hr-line deco-bracket-el h-[2px] w-[50px] mb-2";
+                techLine.style.backgroundColor = highlightColor;
+                previewContainer.insertBefore(techLine, badgeFooter);
+                
+            } else if (bgStyle === 'glass' && previewContainer) {
+                previewContainer.classList.add('backdrop-blur-xl', 'border', 'border-white/10', 'rounded-[24px]', 'p-5', 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]');
+                previewContainer.style.backgroundColor = `rgba(15, 15, 15, ${0.65 * bgOpacityRatio})`;
+            } else if (bgStyle === 'stroke' && previewContainer) {
+                previewContainer.classList.add('p-2');
+                
+                spans.forEach(span => {
+                    span.style.webkitTextStroke = '2.2px #000000'; // Thicker stroke
+                    span.style.paintOrder = 'stroke fill';
+                    span.style.textShadow = '3px 3px 0px #000000, -1px -1px 0px #000000, 1px -1px 0px #000000, -1px 1px 0px #000000, 1px 1px 0px #000000';
+                });
+
+                if (subtitleEl) {
+                    subtitleEl.style.webkitTextStroke = '1.4px #000000';
+                    subtitleEl.style.paintOrder = 'stroke fill';
+                    subtitleEl.style.textShadow = '2px 2px 0px #000000, -1px -1px 0px #000000, 1px -1px 0px #000000, -1px 1px 0px #000000, 1px 1px 0px #000000';
+                }
+                
+                // Floating dual-capsules instead of one giant black bar
+                if (badgeLeftPill) badgeLeftPill.className = "flex items-center gap-1.5 text-neutral-100 bg-neutral-950/95 border border-white/15 px-4.5 py-2 rounded-full shadow-2xl pointer-events-auto";
+                if (badgeRightPill) badgeRightPill.className = "flex items-center gap-1 text-neutral-100 bg-neutral-950/95 border border-white/15 px-4.5 py-2 rounded-full shadow-2xl pointer-events-auto";
+                if (badgeFooter) badgeFooter.className = "pt-3 flex items-center justify-between text-[10px]"; // remove borders
+                const bullet = document.getElementById('disp-bullet');
+                if (bullet) bullet.style.backgroundColor = highlightColor;
+            } else if (bgStyle === 'architect' && previewContainer) {
+                previewContainer.classList.add('border-l-4', 'border-brand-orange', 'backdrop-blur-sm', 'p-4', 'rounded-r-xl');
+                previewContainer.style.backgroundColor = `rgba(10, 10, 10, ${0.35 * bgOpacityRatio})`;
+            } else if (bgStyle === 'shadow' && previewContainer) {
+                previewContainer.classList.add('p-2');
+            } else if (bgStyle === 'vignette') {
+                if (bottomGradient) {
+                    bottomGradient.style.display = 'block';
+                    bottomGradient.style.opacity = opacity / 100;
+                }
+            } else if (bgStyle === 'classic-dark' && previewContainer) {
+                previewContainer.classList.add('border', 'border-white/5', 'rounded-[24px]', 'p-5', 'shadow-2xl');
+                previewContainer.style.backgroundColor = `rgba(10, 10, 10, ${0.92 * bgOpacityRatio})`;
+            }
+
+            // Align HTML Live Preview Box vertically using % relative to Canvas 1920 height
+            if (previewContainer) {
+                const topPercent = ((titleY - 180) / 1920) * 100;
+                previewContainer.style.top = `${topPercent}%`;
+            }
+
+            // Header Logo visibility toggle sync
+            const showLogo = showLogoToggleEl ? showLogoToggleEl.checked : false; // Default unchecked as requested
+            const logoWrapper = document.getElementById('preview-logo-wrapper');
+            if (logoWrapper) {
+                if (showLogo) logoWrapper.style.visibility = 'visible';
+                else logoWrapper.style.visibility = 'hidden';
+            }
+        }
+
+        // Toggle Instagram 1:1 Safety Box Display
+        function toggleSafeZone() {
+            const overlay = document.getElementById('safe-zone-square');
+            const btn = document.getElementById('safe-zone-btn');
+            
+            if (overlay) overlay.classList.toggle('hidden');
+            if (btn) {
+                btn.classList.toggle('bg-brand-orange');
+                btn.classList.toggle('text-black');
+                btn.classList.toggle('bg-neutral-800');
+                btn.classList.toggle('text-neutral-300');
+            }
+        }
+
+        // Standard Icon Drawings Helper on Canvas
+        function drawBottomIcon(ctx, iconKey, x, y, accentColor) {
+            ctx.fillStyle = accentColor;
+            ctx.font = 'bold 36px "Font Awesome 6 Free"';
+            
+            let unicodeStr = '\uf46e'; // Default ship/box
+            if (iconKey === 'architect') unicodeStr = '\uf568'; // drafting compass
+            else if (iconKey === 'villa') unicodeStr = '\ue3b2'; // house chimney
+            else if (iconKey === 'contractor') unicodeStr = '\uf1c1'; // file-pdf
+
+            ctx.fillText(unicodeStr, x, y);
+        }
+
+        // Helper to draw media (Image or Video) to canvas with aspect-fill scaling
+        function drawBackgroundMedia(ctx, media, width, height) {
+            const mediaWidth = media.naturalWidth || media.videoWidth;
+            const mediaHeight = media.naturalHeight || media.videoHeight;
+            
+            const mediaRatio = mediaWidth / mediaHeight;
+            const canvasRatio = width / height;
+            let drawWidth, drawHeight, drawX, drawY;
+
+            if (mediaRatio > canvasRatio) {
+                drawHeight = height;
+                drawWidth = height * mediaRatio;
+                drawX = (width - drawWidth) / 2;
+                drawY = 0;
+            } else {
+                drawWidth = width;
+                drawHeight = width / mediaRatio;
+                drawX = 0;
+                drawY = (height - drawHeight) / 2;
+            }
+
+            // Apply canvas scale and translate offsets from DOM inputs to fully resolve GPT feedback Point 1
+            const bgScaleEl = document.getElementById('bg-scale');
+            const bgShiftYEl = document.getElementById('bg-shift-y');
+            const canvasScale = bgScaleEl ? parseFloat(bgScaleEl.value) / 100 : 1.0;
+            const canvasShiftY = bgShiftYEl ? parseFloat(bgShiftYEl.value) : 0;
+
+            ctx.save();
+            ctx.translate(width / 2, height / 2);
+            ctx.scale(canvasScale, canvasScale);
+            ctx.translate(-width / 2, -height / 2 + canvasShiftY);
+            ctx.drawImage(media, drawX, drawY, drawWidth, drawHeight);
+            ctx.restore();
+        }
+
+        // Engine: Generate Super High Definition JPEG/PNG Canvas and trigger download
+        function generateAndDownload() {
+            const canvas = document.getElementById('export-canvas');
+            const ctx = canvas.getContext('2d');
+
+            const p1El = document.getElementById('title-main');
+            const highlightEl = document.getElementById('title-highlight');
+            const subEl = document.getElementById('subtitle-val');
+            const audEl = document.getElementById('audience-text');
+            const rightEl = document.getElementById('footer-right-text');
+            const iconEl = document.getElementById('left-icon');
+            const highlightColorEl = document.getElementById('highlight-color-select');
+            const fontFamilyEl = document.getElementById('font-family-select');
+            const fontSizeEl = document.getElementById('text-font-size');
+            const bgStyleEl = document.getElementById('text-bg-style');
+            const opacityEl = document.getElementById('gradient-range');
+            const showLogoToggleEl = document.getElementById('show-logo-toggle');
+            const strokeWidthEl = document.getElementById('text-stroke-width');
+            const letterSpacingEl = document.getElementById('text-letter-spacing');
+            const lineHeightEl = document.getElementById('text-line-height');
+            const titleYEl = document.getElementById('text-y-position');
+            const subFontSizeEl = document.getElementById('sub-font-size');
+            const subLetterSpacingEl = document.getElementById('sub-letter-spacing');
+            const badgeFontSizeEl = document.getElementById('badge-font-size');
+            const badgeLetterSpacingEl = document.getElementById('badge-letter-spacing');
+            const dimLevelEl = document.getElementById('inspection-dim-level');
+            const dimLevel = dimLevelEl ? dimLevelEl.value : 'light';
+            const bgOpacityEl = document.getElementById('text-bg-opacity');
+            const bgOpacityRatio = bgOpacityEl ? parseInt(bgOpacityEl.value) / 100 : 1;
+
+            const tokens = getTitleTokens();
+            const t1 = tokens.p1;
+            const th = tokens.hl;
+            const t2 = tokens.p2;
+
+            const sub = subEl ? subEl.value : "Details Before Manufacturing";
+            const audText = audEl ? audEl.value : "For Custom Projects";
+            const rightText = rightEl ? rightEl.value : "";
+            const iconKey = iconEl ? iconEl.value : "ship";
+            const opacity = opacityEl ? parseInt(opacityEl.value) / 100 : 0.5;
+            
+            const titleY = titleYEl ? parseInt(titleYEl.value) : 1180;
+            const strokeVal = strokeWidthEl ? parseFloat(strokeWidthEl.value) : 2;
+            const letterSpacing = letterSpacingEl ? parseFloat(letterSpacingEl.value) : -4;
+            const lineHeightPct = lineHeightEl ? parseFloat(lineHeightEl.value) : 92;
+            const subFontSize = subFontSizeEl ? parseInt(subFontSizeEl.value) : 38;
+            const subLetterSpacing = subLetterSpacingEl ? parseFloat(subLetterSpacingEl.value) : 0;
+            const badgeFontSize = badgeFontSizeEl ? parseInt(badgeFontSizeEl.value) : 32;
+            const badgeLetterSpacing = badgeLetterSpacingEl ? parseFloat(badgeLetterSpacingEl.value) : 0;
+            const bgStyle = bgStyleEl ? bgStyleEl.value : "inspection";
+
+            const tilt = 0; // Strictly hardcoded to 0 as requested by B2B quality guideline
+            const highlightColor = highlightColorEl ? highlightColorEl.value : '#F3921F';
+            const fontFamily = fontFamilyEl ? fontFamilyEl.value : 'Space Grotesk, sans-serif';
+            const fontSize = fontSizeEl ? parseInt(fontSizeEl.value) : 72;
+
+            const previewImg = document.getElementById('bg-img-preview');
+            const previewVideo = document.getElementById('bg-video-preview');
+
+            document.fonts.ready.then(() => {
+                
+                // 1. Draw Background Image or Video Frame
+                if (userBgType === 'image' && userBgImage && userBgImage.complete) {
+                    drawBackgroundMedia(ctx, userBgImage, 1080, 1920);
+                } else if (userBgType === 'video' && previewVideo && previewVideo.readyState >= 2) {
+                    drawBackgroundMedia(ctx, previewVideo, 1080, 1920);
+                } else {
+                    const solidGrad = ctx.createLinearGradient(0, 0, 1080, 1920);
+                    solidGrad.addColorStop(0, '#101010');
+                    solidGrad.addColorStop(0.5, '#050505');
+                    solidGrad.addColorStop(1, '#000000');
+                    ctx.fillStyle = solidGrad;
+                    ctx.fillRect(0, 0, 1080, 1920);
+                }
+
+                // 2. Pre-calculate lines & layout height bounds (Limit width to 720px to bypass IG sidebar)
+                ctx.font = `800 ${fontSize}px ${fontFamily}`;
+                const maxWidth = 720;
+                const lineHeight = fontSize * (lineHeightPct / 100);
+
+                const tokensArray = [
+                    { text: t1, color: '#FFFFFF' },
+                    { text: th, color: highlightColor },
+                    { text: t2, color: '#FFFFFF' }
+                ];
+
+                let words = [];
+                tokensArray.forEach(token => {
+                    const parts = token.text.split(/(\s+)/);
+                    parts.forEach(part => { if (part) words.push({ text: part, color: token.color }); });
+                });
+
+                let lines = [];
+                let currentLine = [];
+                let currentLineWidth = 0;
+
+                for (let i = 0; i < words.length; i++) {
+                    const word = words[i];
+                    const wordWidth = ctx.measureText(word.text).width;
+                    if (currentLineWidth + wordWidth > maxWidth && currentLine.length > 0) {
+                        lines.push(currentLine);
+                        currentLine = [word];
+                        currentLineWidth = wordWidth;
+                    } else {
+                        currentLine.push(word);
+                        currentLineWidth += wordWidth;
+                    }
+                }
+                if (currentLine.length > 0) lines.push(currentLine);
+
+                const bottomY = titleY;
+                const startY = bottomY - (lines.length - 1) * lineHeight;
+
+                // 3. Vignettes and dim protection (vignette mode + inspection dim levels)
+                if (bgStyle === 'vignette') {
+                    const gradTop = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradTop.addColorStop(0, 'rgba(0,0,0,0.85)');
+                    gradTop.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = gradTop;
+                    ctx.fillRect(0, 0, 1080, 400);
+
+                    const gradBottom = ctx.createLinearGradient(0, 1920 * 0.40, 0, 1920);
+                    gradBottom.addColorStop(0, 'rgba(0,0,0,0)');
+                    gradBottom.addColorStop(0.5, `rgba(0,0,0,${opacity * 0.7})`);
+                    gradBottom.addColorStop(1, `rgba(0,0,0,${opacity * 0.98})`);
+                    ctx.fillStyle = gradBottom;
+                    ctx.fillRect(0, 1920 * 0.40, 1080, 1920 * 0.60);
+                } else if (bgStyle === 'inspection' && dimLevel !== 'none') {
+                    const dimOpacityMap = { light: 0.30, medium: 0.55, heavy: 0.80 };
+                    const topDimOpacityMap = { light: 0.15, medium: 0.30, heavy: 0.50 };
+                    const botOp = dimOpacityMap[dimLevel] || 0.30;
+                    const topOp = topDimOpacityMap[dimLevel] || 0.15;
+
+                    if (topOp > 0) {
+                        const gradTop = ctx.createLinearGradient(0, 0, 0, 400);
+                        gradTop.addColorStop(0, `rgba(0,0,0,${topOp})`);
+                        gradTop.addColorStop(1, 'rgba(0,0,0,0)');
+                        ctx.fillStyle = gradTop;
+                        ctx.fillRect(0, 0, 1080, 400);
+                    }
+
+                    const gradBottom = ctx.createLinearGradient(0, 1920 * 0.40, 0, 1920);
+                    gradBottom.addColorStop(0, 'rgba(0,0,0,0)');
+                    gradBottom.addColorStop(0.5, `rgba(0,0,0,${botOp * 0.7})`);
+                    gradBottom.addColorStop(1, `rgba(0,0,0,${botOp * 0.98})`);
+                    ctx.fillStyle = gradBottom;
+                    ctx.fillRect(0, 1920 * 0.40, 1080, 1920 * 0.60);
+                }
+
+                // 4. Logo drawing (Draw ONLY the icon part of "Boswindor 公司logo.png")
+                const showLogo = showLogoToggleEl ? showLogoToggleEl.checked : false; // Default unchecked as requested
+                if (showLogo) {
+                    if (logoImg.complete && logoImg.naturalWidth > 0) {
+                        const symbolSize = logoImg.height; 
+                        ctx.drawImage(logoImg, 0, 0, symbolSize, symbolSize, 80, 80, 110, 110);
+                    } else {
+                        ctx.save();
+                        // Vector representation of the folded door logo icon
+                        ctx.strokeStyle = highlightColor;
+                        ctx.lineWidth = 5;
+                        ctx.lineJoin = 'round';
+                        ctx.lineCap = 'round';
+                        ctx.translate(80, 80);
+                        ctx.scale(1.1, 1.1);
+
+                        // Left panel
+                        ctx.beginPath();
+                        ctx.moveTo(15, 20); ctx.lineTo(35, 28); ctx.lineTo(35, 80); ctx.lineTo(15, 72);
+                        ctx.closePath(); ctx.stroke();
+
+                        // Center panel
+                        ctx.beginPath();
+                        ctx.moveTo(35, 28); ctx.lineTo(65, 28); ctx.lineTo(65, 80); ctx.lineTo(35, 80);
+                        ctx.closePath(); ctx.stroke();
+
+                        // Right panel
+                        ctx.beginPath();
+                        ctx.moveTo(65, 28); ctx.lineTo(85, 20); ctx.lineTo(85, 72); ctx.lineTo(65, 80);
+                        ctx.closePath(); ctx.stroke();
+
+                        // Wave curves
+                        ctx.beginPath(); ctx.moveTo(25, 85); ctx.quadraticCurveTo(40, 75, 42, 15); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(30, 85); ctx.quadraticCurveTo(55, 75, 50, 15); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(35, 85); ctx.quadraticCurveTo(70, 75, 58, 15); ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+
+                // 5. Transform Context, Draw rotated elements together
+                const useStrokeStyle = (bgStyle === 'stroke');
+                const useInspectionStyle = (bgStyle === 'inspection');
+                
+                ctx.save();
+                
+                // Set Global Pivot Translate for Text block rotation (Strictly hardcoded 0 slant)
+                ctx.translate(540, titleY);
+                ctx.rotate(tilt * Math.PI / 180);
+                
+                // Adjust drawing coordinates relative to rotated center (Start at X = -444px left margin to match HTML pl-4 safe offset)
+                const rx = -444; 
+                const rstartY = startY - titleY;
+                const rbottomY = 0; 
+                
+                const cardW = 960;
+                const cardX = -cardW / 2; 
+                const cardY = rstartY - 100;
+                const cardH = (rbottomY + 260) - cardY;
+
+                // Draw background card INSIDE rotated context to prevent diagonal split
+                if (bgStyle === 'glass') {
+                    ctx.save();
+                    ctx.fillStyle = `rgba(15, 15, 15, ${0.65 * bgOpacityRatio})`; 
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; 
+                    ctx.lineWidth = 3;
+                    
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+                    ctx.shadowBlur = 40;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 12;
+                    
+                    ctx.beginPath();
+                    ctx.roundRect(cardX, cardY, cardW, cardH, 32);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.restore();
+                } else if (bgStyle === 'architect') {
+                    ctx.save();
+                    ctx.fillStyle = `rgba(10, 10, 10, ${0.35 * bgOpacityRatio})`; 
+                    ctx.strokeStyle = highlightColor; 
+                    ctx.lineWidth = 8;
+
+                    ctx.beginPath();
+                    ctx.roundRect(cardX, cardY, cardW, cardH, 16);
+                    ctx.fill();
+
+                    // Left accent line
+                    ctx.beginPath();
+                    ctx.moveTo(cardX, cardY);
+                    ctx.lineTo(cardX, cardY + cardH);
+                    ctx.stroke();
+
+                    // Thin borders for other sides
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(cardX + 2, cardY);
+                    ctx.lineTo(cardX + cardW, cardY);
+                    ctx.lineTo(cardX + cardW, cardY + cardH);
+                    ctx.lineTo(cardX + 2, cardY + cardH);
+                    ctx.stroke();
+                    ctx.restore();
+                } else if (bgStyle === 'classic-dark') {
+                    ctx.save();
+                    ctx.fillStyle = `rgba(10, 10, 10, ${0.92 * bgOpacityRatio})`; 
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                    ctx.lineWidth = 3;
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+                    ctx.shadowBlur = 30;
+                    ctx.shadowOffsetY = 15;
+
+                    ctx.beginPath();
+                    ctx.roundRect(cardX, cardY, cardW, cardH, 32);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.restore();
+                } else if (useInspectionStyle) {
+                    // Left vertical orange bar completely removed to perfectly mimic reference image_74e521
+                }
+                
+                if (useStrokeStyle) {
+                    // 1. Measure and Draw Dynamic Split-Capsule badging
+                    ctx.save();
+                    ctx.font = `bold ${badgeFontSize}px Montserrat`;
+                    ctx.letterSpacing = badgeLetterSpacing + 'px';
+
+                    const leftTextWidth = ctx.measureText(audText).width + badgeLetterSpacing * Math.max(0, audText.length - 1);
+                    const leftPillWidth = leftTextWidth + 120;
+
+                    ctx.fillStyle = 'rgba(8, 8, 8, 0.95)';
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.roundRect(rx - 15, rbottomY + 165, leftPillWidth, 85, 42);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // —— Draw text components with ultra bold stroke envelopes ——
+                    // Draw Left Action Icon
+                    ctx.save();
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 10;
+                    ctx.lineJoin = 'round';
+                    ctx.miterLimit = 2;
+                    ctx.font = 'bold 36px "Font Awesome 6 Free"';
+                    let unicodeStr = '\uf46e'; 
+                    if (iconKey === 'architect') unicodeStr = '\uf568';
+                    else if (iconKey === 'villa') unicodeStr = '\ue3b2';
+                    else if (iconKey === 'contractor') unicodeStr = '\uf1c1';
+                    ctx.strokeText(unicodeStr, rx + 15, rbottomY + 224);
+                    drawBottomIcon(ctx, iconKey, rx + 15, rbottomY + 224, highlightColor);
+                    ctx.restore();
+
+                    // Draw Left Audience Text
+                    ctx.save();
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 10;
+                    ctx.lineJoin = 'round';
+                    ctx.miterLimit = 2;
+                    ctx.font = `bold ${badgeFontSize}px Montserrat`;
+                    ctx.letterSpacing = badgeLetterSpacing + 'px';
+                    ctx.strokeText(audText, rx + 75, rbottomY + 220);
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillText(audText, rx + 75, rbottomY + 220);
+                    ctx.restore();
+
+                    // Draw Subtitle Tag (with smooth stroke anti-aliasing)
+                    ctx.save();
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 8;
+                    ctx.lineJoin = 'round';
+                    ctx.font = `bold ${subFontSize}px ${fontFamily}`;
+                    ctx.letterSpacing = subLetterSpacing + 'px';
+                    ctx.strokeText(sub, rx, rbottomY + 65); // Compact 65px
+                    ctx.fillStyle = '#CCCCCC';
+                    ctx.fillText(sub, rx, rbottomY + 65);
+                    ctx.restore();
+
+                    // Draw Multi-Segment Main Title lines with Anti-aliased high contrast borders
+                    ctx.letterSpacing = '0px';
+                    ctx.font = `800 ${fontSize}px ${fontFamily}`;
+                    lines.forEach((line, index) => {
+                        let drawX = rx;
+                        let drawY = rstartY + index * lineHeight;
+                        line.forEach(w => {
+                            ctx.save();
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 16; 
+                            ctx.lineJoin = 'round';
+                            ctx.miterLimit = 2;
+                            
+                            ctx.shadowColor = '#000000';
+                            ctx.shadowBlur = 4;
+                            ctx.shadowOffsetX = 4;
+                            ctx.shadowOffsetY = 4;
+                            ctx.strokeText(w.text, drawX, drawY);
+                            
+                            ctx.shadowColor = 'transparent';
+                            ctx.strokeText(w.text, drawX, drawY);
+                            ctx.restore();
+                            
+                            ctx.fillStyle = w.color;
+                            ctx.fillText(w.text, drawX, drawY);
+                            drawX += ctx.measureText(w.text).width + letterSpacing * w.text.length;
+                        });
+                    });
+
+                } else if (useInspectionStyle) {
+                    // 📐 REFINE GERMAN ENGINEERING MODE: Delicate micro outline + diffused luxury drop shadow (100% Raw pixels)
+                    // Render horizontal blueprint alignment reference line (Shortened to 120px left-aligned per point 4!)
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(rx, rbottomY + 115); // Tight reference line start
+                    ctx.lineTo(rx + 150, rbottomY + 115); // 精准截短为舒适高档的 150px 标尺线！
+                    ctx.stroke();
+
+                    // Draw B2B Indicators on the bottom left (Orange vertical line perfectly matched to image_74e521)
+                    ctx.save();
+                    ctx.fillStyle = highlightColor;
+                    ctx.fillRect(rx, rbottomY + 138, 7, 34); // vertical accent bullet
+                    ctx.restore();
+
+                    // Left Text (Tucked tightly under the reference line with soft drop shadow and delicate stroke boundary)
+                    ctx.save();
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = `700 ${badgeFontSize}px Montserrat`;
+                    ctx.letterSpacing = badgeLetterSpacing + 'px';
+                    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+                    ctx.lineWidth = strokeVal;
+                    ctx.lineJoin = 'round';
+                    ctx.strokeText(audText, rx + 25, rbottomY + 165);
+                    ctx.fillText(audText, rx + 25, rbottomY + 165); // Text baseline matches vertical bar
+                    ctx.restore();
+
+                    // Subtitle Tag with precise crisp drop shadow (Raised to bright white #FFFFFF)
+                    ctx.save();
+                    ctx.font = `700 ${subFontSize}px ${fontFamily}`;
+                    ctx.letterSpacing = subLetterSpacing + 'px';
+                    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+                    ctx.lineWidth = strokeVal;
+                    ctx.lineJoin = 'round';
+                    ctx.strokeText(sub, rx, rbottomY + 65); // Tight spacing of 65px
+                    ctx.fillStyle = '#FFFFFF'; // Bright white
+                    ctx.fillText(sub, rx, rbottomY + 65); // Tight spacing of 65px
+                    ctx.restore();
+
+                    // Main Title Lines with delicate stroke miter bounds and high-density soft blurred shadow
+                    ctx.letterSpacing = '0px';
+                    lines.forEach((line, index) => {
+                        let drawX = rx; 
+                        let drawY = rstartY + index * lineHeight;
+                        line.forEach(w => {
+                            ctx.save();
+                            ctx.font = `800 ${fontSize}px ${fontFamily}`;
+                            
+                            // High miter bounds prevent sharp spikes on geometric Space Grotesk letter nodes
+                            ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
+                            ctx.lineWidth = strokeVal; // Refined thickness linked directly to slider
+                            ctx.lineJoin = 'round';
+                            ctx.miterLimit = 2;
+
+                            // Apple-grade diffused drop shadow parameters
+                            ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+                            ctx.shadowBlur = 18; // Smoothed and extended blur radius for luxurious diffusion
+                            ctx.shadowOffsetX = 0;
+                            ctx.shadowOffsetY = 4;
+                            ctx.strokeText(w.text, drawX, drawY);
+                            
+                            ctx.fillStyle = w.color;
+                            ctx.fillText(w.text, drawX, drawY);
+                            ctx.restore();
+                            
+                            drawX += ctx.measureText(w.text).width + letterSpacing * w.text.length;
+                        });
+                    });
+
+                } else {
+                    // Standard background card shadow/overlay drawing methods
+                    ctx.shadowColor = 'rgba(0,0,0,0.9)';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 3;
+
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(rx, rbottomY + 160);
+                    ctx.lineTo(-rx, rbottomY + 160);
+                    ctx.stroke();
+
+                    drawBottomIcon(ctx, iconKey, rx, rbottomY + 212, highlightColor);
+
+                    ctx.letterSpacing = badgeLetterSpacing + 'px';
+                    ctx.font = `bold ${badgeFontSize}px Montserrat`;
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillText(audText, rx + 60, rbottomY + 210);
+
+                    ctx.shadowColor = 'rgba(0,0,0,0.95)';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowOffsetY = 5;
+
+                    ctx.font = `bold ${subFontSize}px ${fontFamily}`;
+                    ctx.letterSpacing = subLetterSpacing + 'px';
+                    ctx.fillStyle = '#CCCCCC';
+                    ctx.fillText(sub, rx, rbottomY + 65);
+
+                    ctx.letterSpacing = '0px';
+                    ctx.font = `800 ${fontSize}px ${fontFamily}`;
+                    lines.forEach((line, index) => {
+                        let drawX = rx;
+                        let drawY = rstartY + index * lineHeight;
+                        line.forEach(w => {
+                            ctx.fillStyle = w.color;
+                            ctx.fillText(w.text, drawX, drawY);
+                            drawX += ctx.measureText(w.text).width + letterSpacing * w.text.length;
+                        });
+                    });
+                }
+                
+                ctx.restore(); // Restore global translation transform matrix
+
+                const link = document.createElement('a');
+                link.download = `Boswindor_Cover_Template_${currentTemplateId}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                link.click();
+                showToast("超清外贸大师封面已成功导出，智能避让与背板样式渲染就绪！", "success");
+            });
+        }
+    </script>
+</body>
+</html>
