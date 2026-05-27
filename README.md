@@ -4,12 +4,13 @@ Boswindor 专属海外社媒封面生成器 — 一款运行在浏览器端的 B
 
 ## 功能
 
-- **三标签面板**: 素材管理 (图片/视频上传) / 文字排版 (8 个可调参数) / 样式切换 (5 种工业背板)
+- **三标签面板**: 素材管理 (图片/视频上传) / 文字排版 (11 个可调参数) / 样式切换 (5 种工业背板)
 - **手机预览**: 1/3 比例实时预览，支持拖拽文字定位、IG 系统 UI 叠加层、安全线辅助
 - **AI 智能定位**: 自动分析背景复杂度，锁定文字最佳 Y 位置
 - **B2B 预设**: 4 个工业场景模板一键切换 (shipping / inspect / showroom-pull / meeting-neck)
 - **Canvas 导出**: 1080×1920 JPG 高质量输出
 - **品牌系统**: Boswindor 标准色板、字体、Logo 管理
+- **精致包边**: 主标题/副标题/标签独立描边控制，范围 0-20px，支持精细调节
 
 ## 快速开始
 
@@ -18,14 +19,16 @@ npm install
 npx playwright test
 ```
 
-浏览器直接打开 `Cover_V4.4.0.html` 即可使用。
+浏览器直接打开 `Cover_V4.6.0.html` 即可使用。
 
 ## 项目结构
 
 ```
 ├── Cover.html              # V1.0.0 稳定版
 ├── Cover_V4.0.0.html       # V4.0.0 稳定版
-├── Cover_V4.4.0.html       # V4.4.0 主文件 (最新)
+├── Cover_V4.2.0.html       # V4.2.0 版本
+├── Cover_V4.4.0.html       # V4.4.0 版本
+├── Cover_V4.6.0.html       # V4.6.0 主文件 (最新)
 ├── PRD.md                  # 产品需求文档
 ├── package.json            # Playwright 依赖
 ├── playwright.config.js    # Playwright (Edge) 配置
@@ -38,6 +41,8 @@ npx playwright test
 HTML5 Canvas · Tailwind CSS · Google Fonts · FontAwesome · Vanilla JS · Playwright
 
 ## 版本
+
+**V4.6.0** — 精致包边参数化：主标题/副标题/标签独立描边控制 (0-20px, 默认 6px)，3D描边风格参数化，标题字间距默认 0px
 
 **V4.4.0** — 动态缩放预览、精致包边比例匹配、顶部渐变修复、默认值优化、标签透明背景、Stroke样式完整匹配
 
