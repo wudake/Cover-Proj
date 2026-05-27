@@ -56,7 +56,8 @@ test.describe('Cover.html - 静态结构测试', () => {
       'title-main', 'title-highlight', 'subtitle-val', 'audience-text',
       'highlight-color-select', 'text-bg-style', 'inspection-dim-level',
       'text-bg-opacity', 'bg-opacity-value',
-      'text-letter-spacing', 'text-line-height', 'text-stroke-width',
+      'text-letter-spacing', 'text-line-height',
+      'title-stroke-width', 'subtitle-stroke-width', 'badge-stroke-width',
       'show-logo-toggle',
       'text-y-position', 'text-y-value', 'ai-status-badge',
       'ig-system-overlays', 'safe-zone-square',
@@ -235,11 +236,26 @@ test.describe('Cover.html - 文本与排版控制', () => {
   });
 
   test('T27: 描边宽度滑块存在且可调节', async ({ page }) => {
-    const slider = page.locator('#text-stroke-width');
-    await expect(slider).toBeVisible();
-    await slider.fill('2');
+    // 主标题包边
+    const titleSlider = page.locator('#title-stroke-width');
+    await expect(titleSlider).toBeVisible();
+    await titleSlider.fill('6');
     await page.waitForTimeout(200);
-    await expect(slider).toHaveValue('2');
+    await expect(titleSlider).toHaveValue('6');
+
+    // 副标题包边
+    const subtitleSlider = page.locator('#subtitle-stroke-width');
+    await expect(subtitleSlider).toBeVisible();
+    await subtitleSlider.fill('5');
+    await page.waitForTimeout(200);
+    await expect(subtitleSlider).toHaveValue('5');
+
+    // 标签包边
+    const badgeSlider = page.locator('#badge-stroke-width');
+    await expect(badgeSlider).toBeVisible();
+    await badgeSlider.fill('4');
+    await page.waitForTimeout(200);
+    await expect(badgeSlider).toHaveValue('4');
   });
 });
 
@@ -883,13 +899,23 @@ test.describe('Cover_V4.4.0 - 预览与画布一致性', () => {
   });
 
   test('T85: 精致包边值预览与画布读取一致', async ({ page }) => {
-    await page.locator('#text-stroke-width').fill('3');
+    await page.locator('#title-stroke-width').fill('5');
+    await page.locator('#subtitle-stroke-width').fill('4');
+    await page.locator('#badge-stroke-width').fill('3');
     await page.waitForTimeout(300);
     const canvasVal = await page.evaluate(() => {
-      const el = document.getElementById('text-stroke-width');
-      return el ? parseFloat(el.value) : null;
+      const titleEl = document.getElementById('title-stroke-width');
+      const subtitleEl = document.getElementById('subtitle-stroke-width');
+      const badgeEl = document.getElementById('badge-stroke-width');
+      return {
+        title: titleEl ? parseFloat(titleEl.value) : null,
+        subtitle: subtitleEl ? parseFloat(subtitleEl.value) : null,
+        badge: badgeEl ? parseFloat(badgeEl.value) : null,
+      };
     });
-    expect(canvasVal).toBe(3);
+    expect(canvasVal.title).toBe(5);
+    expect(canvasVal.subtitle).toBe(4);
+    expect(canvasVal.badge).toBe(3);
   });
 
   test('T86: 字体选择预览与画布一致', async ({ page }) => {
@@ -909,7 +935,9 @@ test.describe('Cover_V4.4.0 - 预览与画布一致性', () => {
     await page.locator('#text-font-size').fill('80');
     await page.locator('#text-letter-spacing').fill('0');
     await page.locator('#text-line-height').fill('100');
-    await page.locator('#text-stroke-width').fill('2');
+    await page.locator('#title-stroke-width').fill('6');
+    await page.locator('#subtitle-stroke-width').fill('5');
+    await page.locator('#badge-stroke-width').fill('4');
     await page.locator('#sub-font-size').fill('40');
     await page.locator('#sub-letter-spacing').fill('2');
     await page.locator('#badge-font-size').fill('28');
@@ -933,7 +961,9 @@ test.describe('Cover_V4.4.0 - 预览与画布一致性', () => {
           fontSize: parseInt(document.getElementById('text-font-size')?.value),
           letterSpacing: parseFloat(document.getElementById('text-letter-spacing')?.value),
           lineHeight: parseFloat(document.getElementById('text-line-height')?.value),
-          strokeWidth: parseFloat(document.getElementById('text-stroke-width')?.value),
+          strokeWidth: parseFloat(document.getElementById('title-stroke-width')?.value),
+          subtitleStrokeWidth: parseFloat(document.getElementById('subtitle-stroke-width')?.value),
+          badgeStrokeWidth: parseFloat(document.getElementById('badge-stroke-width')?.value),
           subFontSize: parseInt(document.getElementById('sub-font-size')?.value),
           subLetterSpacing: parseFloat(document.getElementById('sub-letter-spacing')?.value),
           badgeFontSize: parseInt(document.getElementById('badge-font-size')?.value),
@@ -970,7 +1000,9 @@ test.describe('Cover_V4.4.0 - 预览与画布一致性', () => {
     expect(canvasParams.fontSize).toBe(80);
     expect(canvasParams.letterSpacing).toBe(0);
     expect(canvasParams.lineHeight).toBe(100);
-    expect(canvasParams.strokeWidth).toBe(2);
+    expect(canvasParams.strokeWidth).toBe(6);
+    expect(canvasParams.subtitleStrokeWidth).toBe(5);
+    expect(canvasParams.badgeStrokeWidth).toBe(4);
     expect(canvasParams.subFontSize).toBe(40);
     expect(canvasParams.subLetterSpacing).toBe(2);
     expect(canvasParams.badgeFontSize).toBe(28);
