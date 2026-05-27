@@ -236,9 +236,9 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
                                         <label class="text-xs text-neutral-400 font-bold">字号</label>
-                                        <span id="font-size-val" class="text-xs text-brand-orange font-mono">74px</span>
+                                        <span id="font-size-val" class="text-xs text-brand-orange font-mono">78px</span>
                                     </div>
-                                    <input type="range" id="text-font-size" min="48" max="96" value="74" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                    <input type="range" id="text-font-size" min="48" max="96" value="78" oninput="updatePreview()" class="w-full accent-brand-orange">
                                 </div>
                                 <div>
                                     <div class="flex justify-between items-center mb-1">
@@ -277,9 +277,9 @@
                                     <div>
                                         <div class="flex justify-between items-center mb-1">
                                             <label class="text-xs text-neutral-400 font-bold">副标题字号</label>
-                                            <span id="sub-font-size-val" class="text-xs text-brand-orange font-mono">40px</span>
+                                            <span id="sub-font-size-val" class="text-xs text-brand-orange font-mono">44px</span>
                                         </div>
-                                        <input type="range" id="sub-font-size" min="20" max="56" value="40" oninput="updatePreview()" class="w-full accent-brand-orange">
+                                        <input type="range" id="sub-font-size" min="20" max="56" value="44" oninput="updatePreview()" class="w-full accent-brand-orange">
                                     </div>
                                     <div>
                                         <div class="flex justify-between items-center mb-1">
@@ -534,7 +534,7 @@
                             </div>
 
                             <!-- Bottom Floating Text Labels -->
-                            <div id="preview-text-container" class="space-y-2 absolute left-8 max-w-[70%] transition-all duration-300 origin-left pl-4">
+                            <div id="preview-text-container" class="space-y-2 absolute left-8 max-w-[79%] transition-all duration-300 origin-left pl-4">
                                 <div class="space-y-1.5">
                                     <!-- Title Display Group -->
                                     <h2 class="text-2xl font-extrabold leading-tight tracking-tight text-white whitespace-pre-wrap break-words" style="text-shadow: 0 4px 12px rgba(0,0,0,0.95), 0 1px 3px rgba(0,0,0,0.95);">
@@ -1329,7 +1329,7 @@
             const badgeStrokeVal = badgeStrokeWidthEl ? parseFloat(badgeStrokeWidthEl.value) : 6;
             const letterSpacing = letterSpacingEl ? parseFloat(letterSpacingEl.value) : 0;
             const lineHeightPct = lineHeightEl ? parseFloat(lineHeightEl.value) : 112;
-            const subFontSize = subFontSizeEl ? parseInt(subFontSizeEl.value) : 40;
+            const subFontSize = subFontSizeEl ? parseInt(subFontSizeEl.value) : 44;
             const subLetterSpacing = subLetterSpacingEl ? parseFloat(subLetterSpacingEl.value) : 1;
             const badgeFontSize = badgeFontSizeEl ? parseInt(badgeFontSizeEl.value) : 32;
             const badgeLetterSpacing = badgeLetterSpacingEl ? parseFloat(badgeLetterSpacingEl.value) : 1;
@@ -1342,7 +1342,7 @@
             const decoCorner = false; // Strictly disabled as requested
             const highlightColor = highlightColorEl ? highlightColorEl.value : '#F3921F';
             const fontFamily = fontFamilyEl ? fontFamilyEl.value : 'Space Grotesk, sans-serif';
-            const fontSize = fontSizeEl ? fontSizeEl.value : 74;
+            const fontSize = fontSizeEl ? fontSizeEl.value : 78;
             const opacity = opacityEl ? opacityEl.value : 50;
 
             // Apply interactive background scale & vertical shift directly via CSS transforms!
@@ -1357,7 +1357,7 @@
             if (liveVid) liveVid.style.transform = `scale(${currentScale}) translateY(${currentShiftY}px)`;
 
             if (previewContainer) {
-                previewContainer.className = "space-y-2 absolute left-8 max-w-[70%] transition-all duration-300 origin-left pl-4";
+                previewContainer.className = "space-y-2 absolute left-8 max-w-[79%] transition-all duration-300 origin-left pl-4";
             }
             
             // Toggle Background linear gradients with inspection dim level support
@@ -1724,7 +1724,7 @@
             const badgeStrokeVal = badgeStrokeWidthEl ? parseFloat(badgeStrokeWidthEl.value) : 6;
             const letterSpacing = letterSpacingEl ? parseFloat(letterSpacingEl.value) : 0;
             const lineHeightPct = lineHeightEl ? parseFloat(lineHeightEl.value) : 112;
-            const subFontSize = subFontSizeEl ? parseInt(subFontSizeEl.value) : 40;
+            const subFontSize = subFontSizeEl ? parseInt(subFontSizeEl.value) : 44;
             const subLetterSpacing = subLetterSpacingEl ? parseFloat(subLetterSpacingEl.value) : 1;
             const badgeFontSize = badgeFontSizeEl ? parseInt(badgeFontSizeEl.value) : 32;
             const badgeLetterSpacing = badgeLetterSpacingEl ? parseFloat(badgeLetterSpacingEl.value) : 1;
@@ -1733,7 +1733,7 @@
             const tilt = 0; // Strictly hardcoded to 0 as requested by B2B quality guideline
             const highlightColor = highlightColorEl ? highlightColorEl.value : '#F3921F';
             const fontFamily = fontFamilyEl ? fontFamilyEl.value : 'Space Grotesk, sans-serif';
-            const fontSize = fontSizeEl ? parseInt(fontSizeEl.value) : 74;
+            const fontSize = fontSizeEl ? parseInt(fontSizeEl.value) : 78;
 
             const previewImg = document.getElementById('bg-img-preview');
             const previewVideo = document.getElementById('bg-video-preview');
@@ -1754,10 +1754,10 @@
                     ctx.fillRect(0, 0, 1080, 1920);
                 }
 
-                // 2. Pre-calculate lines & layout height bounds (Limit width to 720px to bypass IG sidebar)
+                // 2. Pre-calculate lines & layout height bounds (Limit width to 820px to bypass IG sidebar)
                 ctx.font = `800 ${fontSize}px ${fontFamily}`;
                 ctx.letterSpacing = letterSpacing + 'px';
-                const maxWidth = 720;
+                const maxWidth = 816;
                 const lineHeight = fontSize * (lineHeightPct / 100);
 
                 const tokensArray = [
